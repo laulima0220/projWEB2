@@ -33,7 +33,7 @@ class Autor implements JsonSerializable
         $this->idAutor=$value;
     }
 
-    public function getNomeAutor(): ?string
+    public function getNomeAutor(): string
     {
         return $this->nomeAutor;
     }
