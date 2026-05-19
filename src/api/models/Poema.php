@@ -1,5 +1,7 @@
 <?php  
 namespace Api\Models;
+use Api\Models\Autor;
+use Api\Models\Categoria;
 use InvalidArgumentException;
 use \JsonSerializable;
 
@@ -117,7 +119,7 @@ class Poema implements JsonSerializable
         $this->categoria = $categoria;
     }
 
-        public function jsonSerialize(): array
+    public function jsonSerialize(): array
     {
         return [
             'idPoema' => $this->getIdPoema(),
