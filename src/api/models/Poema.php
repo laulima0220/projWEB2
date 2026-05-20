@@ -126,8 +126,8 @@ class Poema implements JsonSerializable
             'titulo' => $this->getTitulo(),
             'conteudo' => $this->getConteudo(),
             'anoPublicacao' => $this->getAnoPublicacao(),
-            'autor' => $this->autor(),
-            'categoria' => $this->categoria()
+            'autor' => $this->getAutor(),
+            'categoria' => $this->getCategoria()
         ];
     }
 }
