@@ -168,10 +168,10 @@ class FavoritoDAO
         foreach($rows as $row){
 
             $usuario=new Usuario();
-            $usuario->setIdUsuario((int) $row['idUsuario']);
+            $usuario->setIdUsuario((int) $row['Usuario_idUsuario']);
 
             $poema=new Poema();
-            $poema->setIdPoema((int) $row['idPoema']);
+            $poema->setIdPoema((int) $row['Poema_idPoema']);
 
             $favorito=new Favorito();
             $favorito->setIdFavorito((int) $row['idFavorito']);
@@ -183,5 +183,37 @@ class FavoritoDAO
         }
 
         return $result;
+    }
+
+        public function findByUsuarioEPoema(int $idUsuario, int $idPoema): ?Favorito
+    {
+        error_log("FavoritoDAO::findByUsuarioEPoema()");
+
+        $sql = "
+            SELECT * FROM favorito 
+            WHERE Usuario_idUsuario = ? 
+            AND Poema_idPoema = ?
+        ";
+
+        $stmt = $this->database->getConnection()->prepare($sql);
+        $stmt->execute([$idUsuario, $idPoema]);
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if(!$row) return null;
+
+        $usuario = new Usuario();
+        $usuario->setIdUsuario((int) $row['Usuario_idUsuario']);
+
+        $poema = new Poema();
+        $poema->setIdPoema((int) $row['Poema_idPoema']);
+
+        $favorito = new Favorito();
+        $favorito->setIdFavorito((int) $row['idFavorito']);
+        $favorito->setUsuario($usuario);
+        $favorito->setPoema($poema);
+        $favorito->setDataFavoritado($row['dataFavoritado']);
+
+        return $favorito;
     }
 }
