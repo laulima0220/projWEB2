@@ -6,8 +6,11 @@ namespace Api\Server;
 use Slim\App;                          // Aplicação Slim para gerenciar rotas e middlewares
 use Psr\Http\Message\ServerRequestInterface;  // Interface para requisições HTTP
 use Api\Http\ErrorResponse;              // Classe personalizada para respostas de erro
-use Api\Routes\CargoRouter;              // Router para rotas de cargos
-use Api\Routes\FuncionarioRouter;        // Router para rotas de funcionários
+use Api\Routes\CategoriaRouter;              // Router para rotas de cargos
+use Api\Routes\AutorRouter; 
+use Api\Routes\UsuarioRouter;
+use Api\Routes\PoemaRouter;
+use Api\Routes\FavoritoRouter;       // Router para rotas de funcionários
 
 /**
  * Classe Server - Responsável por configurar e executar o servidor HTTP
@@ -34,14 +37,18 @@ class Server
      * Router responsável pelas rotas de cargos
      * @var CargoRouter
      */
-    private CargoRouter $cargoRouter;
+    //private CargoRouter $cargoRouter;
 
     /**
      * Router responsável pelas rotas de funcionários
      * @var FuncionarioRouter
      */
-    private FuncionarioRouter $funcionarioRouter;
-
+    //private FuncionarioRouter $funcionarioRouter;
+    private CategoriaRouter $categoriaRouter;
+    private AutorRouter $autorRouter;
+    private UsuarioRouter $usuarioRouter;
+    private PoemaRouter $poemaRouter;
+    private FavoritoRouter $favoritoRouter;
     /**
      * Construtor da classe Server
      * 
@@ -54,13 +61,23 @@ class Server
      */
     public function __construct(
         App $app,
-        CargoRouter $cargoRouter,
-        FuncionarioRouter $funcionarioRouter
+        //CargoRouter $cargoRouter,
+        //FuncionarioRouter $funcionarioRouter
+        CategoriaRouter $categoriaRouter,
+        AutorRouter $autorRouter,
+        UsuarioRouter $usuarioRouter,
+        PoemaRouter $poemaRouter,
+        FavoritoRouter $favoritoRouter
     ) {
         // Armazena as dependências recebidas nas propriedades privadas da classe
         $this->app = $app;
-        $this->cargoRouter = $cargoRouter;
-        $this->funcionarioRouter = $funcionarioRouter;
+        //$this->cargoRouter = $cargoRouter;
+        //$this->funcionarioRouter = $funcionarioRouter;
+        $this->categoriaRouter=$categoriaRouter;
+        $this->autorRouter=$autorRouter;
+        $this->usuarioRouter=$usuarioRouter;
+        $this->poemaRouter=$poemaRouter;
+        $this->favoritoRouter=$favoritoRouter;
 
         // Configurações executadas automaticamente quando a classe é instanciada
         // A ordem importa: middlewares primeiro, depois rotas, por fim tratamento de erros
@@ -139,11 +156,16 @@ class Server
 
         // Router de Cargos: configura todas as rotas que começam com /cargos
         // Exemplos: GET /cargos, POST /cargos, GET /cargos/{id}, PUT /cargos/{id}, DELETE /cargos/{id}
-        $this->cargoRouter->setupRoutes();  // Rotas para /cargos/*
+        //$this->cargoRouter->setupRoutes();  // Rotas para /cargos/*
 
         // Router de Funcionários: configura todas as rotas que começam com /funcionarios
         // Exemplos: GET /funcionarios, POST /funcionarios, GET /funcionarios/{id}, etc.
-        $this->funcionarioRouter->setupRoutes();  // Rotas para /funcionarios/*
+        //$this->funcionarioRouter->setupRoutes();  // Rotas para /funcionarios/*
+        $this->categoriaRouter->setupRoutes();
+        $this->autorRouter->setupRoutes();
+        $this->usuarioRouter->setupRoutes();
+        $this->poemaRouter->setupRoutes();
+        $this->favoritoRouter->setupRoutes();
 
         // =============================================================
         // ROTA RAIZ (REDIRECIONAMENTO)
