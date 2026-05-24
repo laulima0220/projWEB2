@@ -42,7 +42,7 @@ class MysqlDatabase
         $this->host = $config['host'] ?? '127.0.0.1';
         $this->user = $config['user'] ?? 'root';
         $this->password = $config['password'] ?? '';
-        $this->database = $config['database'] ?? 'gestao_rh';
+        $this->database = $config['database'] ?? 'museu_poemas';
         $this->port = $config['port'] ?? 3306;
     }
 
