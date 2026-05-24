@@ -34,7 +34,7 @@ $mysqlDatabase = new MysqlDatabase([
     'host' => 'localhost',
     'user' => 'root',
     'password' => '',
-    'database' => 'gestao_rh',
+    'database' => 'museu_poemas',
 ]);
 
 // Constrói o container com todas as configurações definidas

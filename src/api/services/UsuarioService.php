@@ -121,7 +121,7 @@ class UsuarioService
 
         $usuarioExiste = $this->usuarioDAO->findById($idUsuario);
 
-        if(!$usuario){
+        if(!$usuarioExiste){
             throw new ErrorResponse(
                 404,
                 "Usuario não encontrado",

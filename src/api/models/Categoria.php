@@ -5,31 +5,25 @@ use \JsonSerializable;
 
 class Categoria implements JsonSerializable
 {
-    private int $idCategoria;
-    private string $nomeCategoria;
-    private string $descricao;
+    private ?int $idCategoria = null;
+    private ?string $nomeCategoria = null;
+    private ?string $descricao = null;
 
     public function __construct()
     {
-
     }
 
     public function getIdCategoria(): ?int
     {
-       return $this->idCategoria;
+        return $this->idCategoria;
     }
 
     public function setIdCategoria(int $value): void
     {
-        if(!is_int($value)){
-            throw new InvalidArgumentException("idCategoria deve ser um número inteiro.");
+        if($value <= 0){
+            throw new InvalidArgumentException("idCategoria deve ser maior que zero.");
         }
-
-        if($value<=0){
-            throw new InvalidArgumentException("idCargo deve ser maior que zero.");
-        }
-
-        $this->idCargo=$value;
+        $this->idCategoria = $value;
     }
 
     public function getNomeCategoria(): ?string
@@ -39,23 +33,23 @@ class Categoria implements JsonSerializable
 
     public function setNomeCategoria(string $value): void
     {
-        $nome=trim($value);
+        $nome = trim($value);
 
-        if ($nome==='') {
+        if($nome === ''){
             throw new InvalidArgumentException("nomeCategoria não pode ser vazio.");
         }
 
         $len = mb_strlen($nome);
 
-        if ($len<3) {
+        if($len < 3){
             throw new InvalidArgumentException("nomeCategoria deve ter pelo menos 3 caracteres.");
         }
 
-        if ($len>64) {
+        if($len > 64){
             throw new InvalidArgumentException("nomeCategoria deve ter ao máximo 64 caracteres.");
         }
 
-        $this->nomeCategoria=$nome;
+        $this->nomeCategoria = $nome;
     }
 
     public function getDescricao(): ?string
@@ -65,31 +59,31 @@ class Categoria implements JsonSerializable
 
     public function setDescricao(string $value): void
     {
-        $nome=trim($value);
+        $nome = trim($value);
 
-        if ($nome==='') {
+        if($nome === ''){
             throw new InvalidArgumentException("descricao não pode ser vazio.");
         }
 
         $len = mb_strlen($nome);
 
-        if ($len<3) {
+        if($len < 3){
             throw new InvalidArgumentException("descricao deve ter pelo menos 3 caracteres.");
         }
 
-        if ($len>255) {
-            throw new InvalidArgumentException("descricao deve ter ao máximo 64 caracteres.");
+        if($len > 255){
+            throw new InvalidArgumentException("descricao deve ter ao máximo 255 caracteres.");
         }
 
-        $this->descricao=$nome;
+        $this->descricao = $nome;
     }
 
     public function jsonSerialize(): array
     {
-        return[
-            'idCategoria' => $this->getIdCategoria(),
-            'nomeCategoria' => $this->getNomeCategoria(),
-            'descricao' => $this->getDescricao()
+        return [
+            'idCategoria'  => $this->getIdCategoria(),
+            'nomeCategoria'=> $this->getNomeCategoria(),
+            'descricao'    => $this->getDescricao()
         ];
     }
 }

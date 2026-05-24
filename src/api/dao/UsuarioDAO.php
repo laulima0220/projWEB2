@@ -16,7 +16,7 @@ class UsuarioDAO
         error_log("UsuarioDAO::__construct()");
     }
 
-    public function create(Usuario $usuario): int
+    public function create(Usuario $usuario): Usuario
     {
         error_log("UsuarioDAO::create()");
 
@@ -45,7 +45,8 @@ class UsuarioDAO
             throw new Exception("Falha ao inserir usuário");
         }
 
-        return (int) $insertId;
+        $usuario->setIdUsuario((int) $insertId);
+        return $usuario;
     }
 
     public function delete(Usuario $usuario): bool

@@ -17,7 +17,7 @@ class FavoritoDAO
         $this->database=$databaseInstance;
     }
 
-    public function create(Favorito $favorito): int
+    public function create(Favorito $favorito): Favorito
     {
         error_log("FavoritoDAO::create()");
 

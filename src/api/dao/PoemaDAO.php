@@ -17,7 +17,7 @@ class PoemaDAO
         $this->database=$databaseInstance;
     }
 
-    public function create(Poema $poema): int
+    public function create(Poema $poema): Poema
     {
         error_log("PoemaDAO::create()");
 
@@ -179,10 +179,10 @@ class PoemaDAO
         foreach($rows as $row){
 
             $autor=new Autor();
-            $autor->setIdAutor((int) $row['idAutor']);
+            $autor->setIdAutor((int) $row['Autor_idAutor']);
 
             $categoria=new Categoria();
-            $categoria->setIdCategoria((int) $row['idCategoria']);
+            $categoria->setIdCategoria((int) $row['Categoria_idCategoria']);
 
             $poema=new Poema();
             $poema->setIdPoema((int) $row['idPoema']);

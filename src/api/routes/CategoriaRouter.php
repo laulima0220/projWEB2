@@ -41,21 +41,21 @@ class CategoriaRouter
             '/categorias/{idCategoria}',
             [CategoriaController::class, 'findByIdController']
         )
-            ->add(ValidadeCategoriaId::class);
+            ->add(ValidateCategoriaId::class);
 
 
         $this->app->put(
             '/categorias/{idCategoria}',
             [CategoriaController::class, 'updateController']
         )
-            ->add(ValidadeCategoriaBody::class)
-            ->add(ValidadeCategoriaId::class);
+            ->add(ValidateCategoriaBody::class)
+            ->add(ValidateCategoriaId::class);
 
 
         $this->app->delete(
             '/categorias/{idCategoria}',
             [CategoriaController::class, 'deleteController']
         )
-            ->add(ValidadeCategoriaId::class);
+            ->add(ValidateCategoriaId::class);
     }
 }

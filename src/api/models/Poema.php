@@ -1,5 +1,6 @@
-<?php  
+<?php
 namespace Api\Models;
+
 use Api\Models\Autor;
 use Api\Models\Categoria;
 use InvalidArgumentException;
@@ -7,17 +8,15 @@ use \JsonSerializable;
 
 class Poema implements JsonSerializable
 {
-    private int $idPoema;
-    private string $titulo;
-    private string $conteudo;
-    private int $anoPublicacao;
-    private Autor $autor;
-    private Categoria $categoria;
+    private ?int $idPoema = null;
+    private ?string $titulo = null;
+    private ?string $conteudo = null;
+    private ?int $anoPublicacao = null;
+    private ?Autor $autor = null;
+    private ?Categoria $categoria = null;
 
     public function __construct()
     {
-        $this->autor = new Autor();
-        $this->categoria = new Categoria();
     }
 
     public function getIdPoema(): ?int
@@ -30,29 +29,30 @@ class Poema implements JsonSerializable
         if(!is_numeric($valor)){
             throw new InvalidArgumentException("idPoema deve ser um número.");
         }
-        if ($valor <= 0) {
-            throw new \Exception("idPoema deve ser um número inteiro positivo.");
+        if($valor <= 0){
+            throw new InvalidArgumentException("idPoema deve ser um número inteiro positivo.");
         }
+        $this->idPoema = (int) $valor;
     }
 
-    public function getTitulo(): string{
+    public function getTitulo(): ?string
+    {
         return $this->titulo;
     }
 
     public function setTitulo(string $nome): void
     {
         $nome = trim($nome);
-        if (strlen($nome) < 3) {
-            throw new \Exception("titulo deve ter pelo menos 3 caracteres.");
+        if(strlen($nome) < 3){
+            throw new InvalidArgumentException("titulo deve ter pelo menos 3 caracteres.");
         }
-        if(strlen($nome)>128)
-        {
-            throw new \Exception("titulo deve ter ao máximo 128 caracteres.");
+        if(strlen($nome) > 128){
+            throw new InvalidArgumentException("titulo deve ter ao máximo 128 caracteres.");
         }
         $this->titulo = $nome;
     }
 
-    public function getConteudo(): string
+    public function getConteudo(): ?string
     {
         return $this->conteudo;
     }
@@ -60,8 +60,8 @@ class Poema implements JsonSerializable
     public function setConteudo(string $nome): void
     {
         $nome = trim($nome);
-        if (strlen($nome) < 3) {
-            throw new \Exception("conteudo deve ter pelo menos 3 caracteres.");
+        if(strlen($nome) < 3){
+            throw new InvalidArgumentException("conteudo deve ter pelo menos 3 caracteres.");
         }
         $this->conteudo = $nome;
     }
@@ -73,61 +73,57 @@ class Poema implements JsonSerializable
 
     public function setAnoPublicacao($valor): void
     {
-        if ($valor === null || $valor === '') {
+        if($valor === null || $valor === ''){
             $this->anoPublicacao = null;
             return;
         }
-        if (!is_numeric($valor)) {
-            throw new \Exception("anoPublicacao deve ser um número inteiro.");
+        if(!is_numeric($valor)){
+            throw new InvalidArgumentException("anoPublicacao deve ser um número inteiro.");
         }
-        if ($valor <= 0) {
-            throw new \Exception("anoPublicacao deve ser um número inteiro positivo.");
+        if($valor <= 0){
+            throw new InvalidArgumentException("anoPublicacao deve ser um número inteiro positivo.");
         }
-        if($valor>2026){
-            throw new \Exception("anoPublicacao deve ser um ano válido.");
+        if($valor > 2026){
+            throw new InvalidArgumentException("anoPublicacao deve ser um ano válido.");
         }
-        $this->anoPublicacao = $valor;
+        $this->anoPublicacao = (int) $valor;
     }
 
-    public function getAutor(): Autor
+    public function getAutor(): ?Autor
     {
         return $this->autor;
     }
 
     public function setAutor(Autor $autor): void
     {
-        if ($autor->getIdAutor() === null) {
-            throw new InvalidArgumentException(
-                "Autor inválido."
-            );
+        if($autor->getIdAutor() === null){
+            throw new InvalidArgumentException("Autor inválido.");
         }
         $this->autor = $autor;
     }
 
-    public function getCategoria(): Categoria
+    public function getCategoria(): ?Categoria
     {
-        if ($autor->getIdCategoria() === null) {
-            throw new InvalidArgumentException(
-                "Categoria inválida."
-            );
-        }
         return $this->categoria;
     }
 
     public function setCategoria(Categoria $categoria): void
     {
+        if($categoria->getIdCategoria() === null){
+            throw new InvalidArgumentException("Categoria inválida.");
+        }
         $this->categoria = $categoria;
     }
 
     public function jsonSerialize(): array
     {
         return [
-            'idPoema' => $this->getIdPoema(),
-            'titulo' => $this->getTitulo(),
-            'conteudo' => $this->getConteudo(),
-            'anoPublicacao' => $this->getAnoPublicacao(),
-            'autor' => $this->getAutor(),
-            'categoria' => $this->getCategoria()
+            'idPoema'      => $this->getIdPoema(),
+            'titulo'       => $this->getTitulo(),
+            'conteudo'     => $this->getConteudo(),
+            'anoPublicacao'=> $this->getAnoPublicacao(),
+            'autor'        => $this->getAutor(),
+            'categoria'    => $this->getCategoria()
         ];
     }
 }

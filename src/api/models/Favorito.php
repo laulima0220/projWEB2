@@ -1,5 +1,6 @@
 <?php
 namespace Api\Models;
+
 use Api\Models\Usuario;
 use Api\Models\Poema;
 use InvalidArgumentException;
@@ -7,14 +8,13 @@ use \JsonSerializable;
 
 class Favorito implements JsonSerializable
 {
-    private int $idFavorito;
-    private Usuario $usuario;
-    private Poema $poema;
-    private string $dataFavoritado;
+    private ?int $idFavorito = null;
+    private ?Usuario $usuario = null;
+    private ?Poema $poema = null;
+    private ?string $dataFavoritado = null;
 
-    public function __construct(){
-        $this->usuario = new Usuario();
-        $this->poema = new Poema();
+    public function __construct()
+    {
     }
 
     public function getIdFavorito(): ?int
@@ -24,41 +24,37 @@ class Favorito implements JsonSerializable
 
     public function setIdFavorito($valor): void
     {
-        if (!is_numeric($valor)) {
-            throw new \Exception("idFavorito deve ser um número inteiro.");
+        if(!is_numeric($valor)){
+            throw new InvalidArgumentException("idFavorito deve ser um número inteiro.");
         }
-        if ($valor <= 0) {
-            throw new \Exception("idFavorito deve ser um número inteiro positivo.");
+        if($valor <= 0){
+            throw new InvalidArgumentException("idFavorito deve ser um número inteiro positivo.");
         }
-        $this->idFavorito = $valor;
+        $this->idFavorito = (int) $valor;
     }
 
-    public function getUsuario(): Usuario
+    public function getUsuario(): ?Usuario
     {
         return $this->usuario;
     }
 
     public function setUsuario(Usuario $usuario): void
     {
-        if ($usuario->getIdUsuario() === null) {
-            throw new InvalidArgumentException(
-                "Usuário inválido."
-            );
+        if($usuario->getIdUsuario() === null){
+            throw new InvalidArgumentException("Usuário inválido.");
         }
-        $this->usuario = $usuario; 
+        $this->usuario = $usuario;
     }
 
-    public function getPoema(): Poema
+    public function getPoema(): ?Poema
     {
         return $this->poema;
-    } 
+    }
 
     public function setPoema(Poema $poema): void
     {
-        if ($poema->getIdPoema() === null) {
-            throw new InvalidArgumentException(
-                "Poema inválido."
-            );
+        if($poema->getIdPoema() === null){
+            throw new InvalidArgumentException("Poema inválido.");
         }
         $this->poema = $poema;
     }
@@ -72,11 +68,11 @@ class Favorito implements JsonSerializable
     {
         $valor = trim($valor);
 
-        if ($valor === '') {
+        if($valor === ''){
             throw new InvalidArgumentException("dataFavoritado não pode ser vazia.");
         }
 
-        if (strlen($valor) != 10) {
+        if(strlen($valor) != 10){
             throw new InvalidArgumentException("Data inválida.");
         }
 
@@ -86,10 +82,10 @@ class Favorito implements JsonSerializable
     public function jsonSerialize(): array
     {
         return [
-            'idFavorito'=>$this->getIdFavorito(),
-            'usuario'=>$this->getUsuario(),
-            'poema'=>$this->getPoema(),
-            'dataFavoritado'=>$this->getDataFavoritado()
+            'idFavorito'    => $this->getIdFavorito(),
+            'usuario'       => $this->getUsuario(),
+            'poema'         => $this->getPoema(),
+            'dataFavoritado'=> $this->getDataFavoritado()
         ];
     }
 }
