@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8"/>
+        <title> </title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        
+        <link href="/css/bootstrap.min.css" rel="stylesheet" />
+        <script src="/js/bootstrap.bundle.min.js"></script>
+ 
+        <style>
+            body {
+                padding: 2em;
+            }
+
+            table {
+                margin-top: 1em;
+            }
+        </style>
+    </head>
+
+    <body class="container">
+        <!--TITULO-->
+        <h1 class="mb-4">Gerenciamento de Autores</h1>
+
+        <!--FILTRO-->
+        <div class="card mb-3">
+            <div class="card-header">
+                Filtro de busca de Autores
+            </div>
+            <div class="card-body">
+                <label for="txtFiltroAutor" class="form-label">Nome do Autor</label>
+                <input type="text" id="txtFiltroAutor" class="form-control" placeholder="Digite o nome do autor">
+            </div>
+        </div>
+
+        <!--CADASTRO-->
+        <div class="card mb-3">
+            <div class="card-header">
+            Cadastro de Autor
+            </div>
+
+            <div class="card-body">
+            <div class="mb-3">
+                <input type="number" id="txtId" class="form-control mb-2" disabled placeholder="ID (para update ou delete)" />
+                <input type="text" id="txtNomeAutor" class="form-control mb-2" placeholder="Nome" />
+            </div>
+            <div class="mb-3 d-flex gap-2" id="divBotoes"></div>
+            <div id="divResposta"></div>
+            </div>
+        </div>
+
+        <!--LISTAGEM-->
+        <div class="card mt-4">
+            <div class="card-header">
+            Lista de Autores
+            </div>
+            <div class="card-body">
+            <!-- Div onde a tabela será renderizada dinamicamente -->
+            <div id="divTabela"></div>
+            </div>
+        </div>
+
+        <!-- Modal de confirmação -->
+        <div class="modal fade" id="modalConfirm" tabindex="-1" aria-labelledby="modalConfirmLabel" aria-hidden="true">
+            <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id="modalConfirmLabel">Confirmar Exclusão</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                Tem certeza que deseja excluir este autor?
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="btnConfirmDelete">Excluir</button>
+                </div>
+            </div>
+            </div>
+        </div>
+
+        <!--SCRIPT PRINCIPAL-->
+        <script type="module">
+            import ApiService from './ApiService.js';
+            const divUsuario = document.getElementById("divUsuario");
+
+            let userData = localStorage.getItem("userData");
+
+            if (userData) {
+            userData = JSON.parse(userData);
+            } else {
+            window.location.href = "login.html"; 
+            }
+            
+            const token = userData.data.token;
+
+            const api = new ApiService(token);
+
+            let API_DATA;
+
+            const txtId = document.getElementById("txtId");
+            const txtNomeAutor = document.getElementById("txtNomeAutor");
+            const divBotoes = document.getElementById("divBotoes");
+            const divResposta = document.getElementById("divResposta");
+
+            //para criar botoes dinamicamente
+            function createButton(text, className){
+                const btn = document.createElement("button");
+                btn.txContent = text;
+                btn.className = `btn ${className} flex-fill`;
+                return btn;
+            }
+
+            //BOTOES CRUD
+
+            //LISTAR
+            const btnListar = createButton("Listar", "btn-primary");
+            btnListar.onclick = async function btnListar_click() {
+                listAll();
+            };
+            divBotoes.appendChild(btnListar);
+           
+            //CREATE
+            const btnCriar = createButton("Criar", "btn-success");
+            btnCriar.onclick = async function btnCriar_click(){
+                if (txtNomeAutor.value.trim() == ""){
+                    divResposta.txtContent = "Nome inválido";
+                    divResposta.className = "alert alert-warning";
+                    return;
+                }
+
+                const objetoCriar = {
+                    "autor": { "nomeAutor": txtNomeAutor.value.trim() }
+                };
+
+                await api.post("/cargos", objetoCriar);
+
+                listAll();
+            };
+            divBotoes.appendChild(btnCriar);
+
+            //UPDATE
+            const btnAtualizar = createButton("Atualizar", "btn-warning");
+            btnAtualizar.onclick = async function btnAtualizar_click(){
+                const id = txtId.value.trim();
+                if(!id){
+                    divResposta.textContent = "Selecione um autor para atulizar";
+                    divResposta.className = "alert alert-warning";
+                    return
+                }
+                const objetoAtualizar = {
+                    "autor": { "nomeAutor": txtNomeAutor.value.trim() }
+                };
+
+                await api.put("/autores", id, objetoAtualizar);
+                listAll();
+            };
+            divBotoes.appendChild(btnAtualizar);
+
+            //DELETE
+            const btnExcluir = createButton("Excluir", "btn-danger");
+            btnExcluir.onclick = function () {
+                const id = txtId.value.trim();
+                if(!id){
+                    divResposta.textContent="Selecione um autor para excluir";
+                    divResposta.className="alert alert-warning";
+                    return;
+                }
+
+                //MODAL
+                const modal = new bootstrap.Modal(document.getElementById('modalConfirm'));
+                modal.show();
+
+                //CONFIRMACAO NO MODAL
+                const btnConfirmDelete = document.getElementById("btnConfirmDelete");
+                btnConfirmDelete.onclick = async function (){
+                    await api.delete("/autores", id);
+                    listAll();
+                    divResposta.textContent = `Autor ID ${id} excluído com sucesso.`;
+                    divResposta.className = "alert alert-success";
+                    txtId.value = "";
+                    txtNomeAutor.value = "";
+                    modal.hide();
+                };
+            };
+            divBotoes.appendChild(btnExcluir);
+
+            //BUSCAR E EXIBIR EM TABELA
+            async function listAll() {
+                API_DATA = await api.get("/autores");
+
+                if (API_DATA.success == true){
+                    renderTable(API_DATA);
+                } else {
+                    //tratamento de erro opcional;
+                }
+            }
+
+            //MONTAR DINAMICAMENTE TABELA NO DOM
+            function renderTable(dados){
+                const divTabela = document.getElementById("divTabela");
+                divTabela.innerHTML = "";
+
+                const table = document.createElement("table");
+                table.className = "table table-bordered table-striped";
+
+                const thead = document.createElement("thead");
+                thead.className = "table-light";
+                const trHead = document.createElement("tr");
+
+                ["ID", "Nome Autor", "Ações"].forEach(text => {
+                    const th = document.createElement("th");
+                    th.textContent = text;
+                    trHead.appendChild(th);
+                });
+
+                thead.appendChild(trHead);
+                table.appendChild(thead);
+
+                //CORPO DA TABELA
+                const tbody = document.createElement("tbody");
+
+                //itera sobre cada autor !
+                dados.data.autores.forEach(autor => {
+                    const tr = document.createElement("tr");
+
+                    const tdId=document.createElement("td");
+                    tdId.textContent = autor.idAutor;
+                    tr.appendChild(tdId);
+
+                    const tdNome = document.createElement("td");
+                    tdNome.textContent = autor.nomeAutor;
+                    tr.appendChild(tdNome);
+
+                    const tdAcors = document.createElement("div");
+                    divBotoes.className = "d-flex gap-2";
+
+                    //botao selecionar
+                    const btnSel = createButton("Selecionar", "btn-info");
+                    btnSel.onclick = function(){
+                        txtId.value = autor.nomeAutor;
+                        txtNomeAutor.value = autor.nomeAutor;
+                        divResposta.textContent = "";
+                        divResposta.className = "";
+                    };
+                    divBotoes.appendChild(btnSel);
+
+                    tdAcoes.appendChild(divBotoes);
+                    tr.appendChild(tdAcoes);
+
+                    tbody.appendChild(tr);
+                });
+
+                table.appendChild(tbody);
+                divTabela.appendChild(table);
+            }
+
+            //filtro em tempo real
+            txtFiltroAutor.addEventListener("input", function (){
+                const filtro = txtFiltroAutor.value.trim().toLowerCase();
+
+                if(!API_DATA || !API_DATA.data || !API_DATA.data.autores) return;
+
+                const dadosFiltrados = {
+                    data: {
+                        autores: API_DATA.data.autores.filter(autor =>
+                            autor.nomeAutor.toLowerCase().includes(filtro)
+                        )
+                    }
+                };
+
+                renderTable(dadosFiltrados);
+                txtId.value="";
+            });
+
+            listAll();
+        </script>
+    </body>
+
+    
+</html>

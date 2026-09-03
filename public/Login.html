@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+    <head>
+        <meta charset="UTF-8" />
+        <title>CRUD Usuários com ApiService</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        
+        <link href="/css/bootstrap.min.css" rel="stylesheet" />
+
+        <style>
+            body {
+                padding: 2em;
+            }
+
+            table {
+                margin-top: 1em;
+            }
+        </style>
+    </head>
+
+    <body class="container">
+        <h1 class="mb-4">Login</h1>
+
+        <div class="mb-3">
+            <input type="text" id="txtUsuario" class="form-control mb-2" placeholder="usuario"/>
+            <input type="password" id="txtSenha" class="form-control mb-2" placeholder="senha"/>
+        </div>
+
+<!--         <div>
+        "usuario": "helioesperidiao@gmail.com",<br>
+        "senha": "@Helio123456" <br>
+        posicione os arquivos na pasta htdocs.<br>
+        Não esqueça de inicar o servidor de banco de dados<br>
+        os arquivos de banco estão na pasta docs<br>
+        Acesse http://localhost:80/view/Login.html<br>
+        Troque a porta para 8080 caso seja necessário
+
+        </div> -->
+
+        <div class="mb-3" id="divBotoes"></div>
+        <div id="divResposta"></div>
+        <div id="divTabela"></div>
+
+        <script type="module">
+            import ApiService from './ApiService.js';
+
+            const api = new ApiService("o token ainda será gerado");
+
+            let API_DATA;
+
+            const txtUsuario = document.getElementById("txtUsuario");
+            const txtSenha = document.getElementById("txtSenha");
+
+            const divBotoes = document.getElementById("divBotoes");
+            const divResposta = document.getElementById("divResposta");
+
+            function createButton(text, className) {
+            const btn = document.createElement("button");
+            btn.textContent = text;
+            btn.className = `btn ${className} me-2 mb-2`; 
+            return btn;
+            }
+
+            const btnLogin = createButton("Login", "btn-primary");
+            btnLogin.onclick = async function btnListar_click() {
+            // Validação simples para campo nome obrigatório
+
+            if (txtUsuario.value.trim() == "") {
+                divResposta.textContent = "Usuário Inválido";
+                divResposta.className = "alert alert-danger";
+                return;
+            } else if (txtSenha.value.trim() == "") {
+                divResposta.textContent = "Senha Inválida";
+                divResposta.className = "alert alert-danger";
+                return;
+            }
+
+            const dadosLogin = {
+                "usuario": {
+                    "email": txtUsuario.value.trim(),
+                    "senha": txtSenha.value.trim()
+                }
+            }
+
+            const respostaAPI = await api.post("/usuarios/login", dadosLogin);
+            console.log(respostaAPI)
+            if (respostaAPI.success == true) {
+                localStorage.setItem("userData", JSON.stringify(respostaAPI)); // converte a resposta para texto e armazena no local storage na variavel userData
+                window.location.href = "dashboard.html";
+            }
+
+            // Atualiza a lista após criar
+        };
+        divBotoes.appendChild(btnLogin);
+        </script>
+
+            
+    </body>
+</html>
