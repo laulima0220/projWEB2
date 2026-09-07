@@ -250,184 +250,94 @@
     };
     divBotoes.appendChild(btnExcluir);
 
-    // ======================== FUNÇÕES DE SUPORTE ========================
-
-    // Busca todos os funcionários na API e chama a renderização
+    //FUNÇÕES DE SUPORTE
     async function listAll() {
-      API_DATA = await api.get("/funcionarios");
+      API_DATA = await api.get("/usuarios");
       if (API_DATA.success) renderTable(filterData());
     }
 
-    // Limpa o formulário após uma operação
     function limparFormulario(message) {
-      // Exibe a mensagem recebida
       divResposta.textContent = message || "Operação realizada com sucesso!";
       divResposta.className = "alert alert-success";
 
-      // Limpa os campos do formulário
       txtId.value = "";
-      txtNomeFuncionario.value = "";
+      txtNomeUsuario.value = "";
       txtEmail.value = "";
       txtSenha.value = "";
-      cboCargos.value = -1;
-      chkValeTransporte.checked = false;
+      chkAdmin.checked = false;
     }
 
-
-    // -----------------------------------------------------------------------------
     // Função responsável por criar dinamicamente a tabela HTML com os dados
-    // dos funcionários vindos da API (ou filtrados).
-    // -----------------------------------------------------------------------------
+    // dos funcionários vindos da API (ou filtrados)
     function renderTable(dados) {
-
-      // Obtém a referência da div onde a tabela será exibida.
       const divTabela = document.getElementById("divTabela");
 
-      // Limpa o conteúdo anterior da div (caso já exista uma tabela renderizada).
-      // Isso garante que uma nova tabela será criada do zero a cada atualização.
       divTabela.innerHTML = "";
 
-      // ---------------------------------------------------------------------------
-      // 1️⃣ Criação do elemento <table> e configuração básica de estilo.
-      // ---------------------------------------------------------------------------
       const table = document.createElement("table");
-      table.className = "table table-bordered table-striped"; // Usa classes Bootstrap
-
-      // ---------------------------------------------------------------------------
-      // 2️⃣ Criação do cabeçalho da tabela (<thead>).
-      // ---------------------------------------------------------------------------
+      table.className = "table table-bordered table-striped"; 
 
       const thead = document.createElement("thead");
-      thead.className = "table-light"; // Cor de fundo clara para destacar o cabeçalho
+      thead.className = "table-light";
 
-      // Cria uma linha de cabeçalho (<tr>) com os nomes das colunas.
       const trHead = document.createElement("tr");
 
-      // Lista de títulos das colunas que aparecerão no topo da tabela.
-      ["ID", "Nome", "Email", "Vale Transporte", "Cargo", "Ações"].forEach(text => {
-        const th = document.createElement("th"); // Cria um cabeçalho de coluna
-        th.textContent = text; // Define o texto da coluna (ex: "Nome", "Email")
-        trHead.appendChild(th); // Adiciona o <th> dentro da linha <tr>
+      ["ID", "Nome", "Email", "Admin", "Ações"].forEach(text => {
+        const th = document.createElement("th"); 
+        th.textContent = text;
+        trHead.appendChild(th); 
       });
 
-      // Adiciona a linha com os títulos dentro do cabeçalho e depois na tabela.
       thead.appendChild(trHead);
       table.appendChild(thead);
 
-      // ---------------------------------------------------------------------------
-      // 3️⃣ Criação do corpo da tabela (<tbody>) que conterá os dados.
-      // ---------------------------------------------------------------------------
-
       const tbody = document.createElement("tbody");
 
-      // Para cada funcionário recebido nos dados, cria uma nova linha (<tr>).
-      dados.data.funcionarios.forEach(funcionario => {
-        const tr = document.createElement("tr"); // Cria uma linha da tabela
-
-        // -------------------------------------------------------
-        // 3.1️⃣ Colunas básicas: ID, Nome e Email.
-        // -------------------------------------------------------
-        // Percorre essas três propriedades e cria uma célula (<td>) para cada uma.
-        ["idFuncionario", "nomeFuncionario", "email"].forEach(key => {
+      dados.data.funcionarios.forEach(usuario => {
+        const tr = document.createElement("tr"); 
+ 
+        ["idUsuario", "nomeUsuario", "email"].forEach(key => {
           const td = document.createElement("td");
-          td.textContent = funcionario[key]; // Pega o valor direto do objeto
-          tr.appendChild(td); // Adiciona a célula à linha atual
+          td.textContent = usuario[key]; 
+          tr.appendChild(td); 
         });
 
-        // -------------------------------------------------------
-        // 3.2️⃣ Coluna que mostra se o funcionário recebe vale-transporte.
-        // -------------------------------------------------------
-        const tdVale = document.createElement("td");
-        // Converte o valor numérico (1/0) para texto ("Sim"/"Não")
-        tdVale.textContent = funcionario.recebeValeTransporte == 1 ? "Sim" : "Não";
-        tr.appendChild(tdVale);
+        const tdAdmin = document.createElement("td");
+        tdAdmin.textContent = usuario.eadmin == 1 ? "Sim" : "Não";
+        tr.appendChild(tdAdmin);
 
-        // -------------------------------------------------------
-        // 3.3️⃣ Coluna que mostra o nome do cargo do funcionário.
-        // -------------------------------------------------------
-        const tdCargo = document.createElement("td");
-        tdCargo.textContent = funcionario.cargo.nomeCargo; // Acessa o nome dentro do objeto "cargo"
-        tr.appendChild(tdCargo);
-
-        // -------------------------------------------------------
-        // 3.4️⃣ Coluna de ações (botões Selecionar e Excluir).
-        // -------------------------------------------------------
-
-        // Cria um container flexível para os botões
         const divBotoes = document.createElement("div");
-        divBotoes.className = "d-flex gap-2"; // Flex horizontal com espaçamento
+        divBotoes.className = "d-flex gap-2";
 
         const tdAcoes = document.createElement("td");
 
-        // =======================================================
-        // Botão “Selecionar” — preenche o formulário com os dados do funcionário
-        // quando o usuário deseja atualizar ou consultar detalhes.
-        // =======================================================
         const btnSel = createButton("Selecionar", "btn-info");
 
-        // Quando clicado, os campos do formulário são preenchidos automaticamente.
         btnSel.onclick = () => {
-          txtId.value = funcionario.idFuncionario;
-          txtNomeFuncionario.value = funcionario.nomeFuncionario;
-          txtEmail.value = funcionario.email;
-          txtSenha.value = ""; // Por segurança, a senha não é exibida
-          cboCargos.value = funcionario.cargo.idCargo;
-          chkValeTransporte.checked = funcionario.recebeValeTransporte == 1;
+          txtId.value = usuario.idUsuario;
+          txtNomeUsuario.value = usuario.nomeUsuario;
+          txtEmail.value = usuario.email;
+          txtSenha.value = ""; 
+          chkAdmin.checked = usuario.eadmin == 1;
 
-          // Limpa mensagens de status (sucesso/erro) da tela.
           divResposta.textContent = "";
           divResposta.className = "";
         };
         divBotoes.appendChild(btnSel)
-        // Adiciona o botão “Selecionar” dentro da célula de ações.
         tdAcoes.appendChild(divBotoes);
 
-
-
-        // Por fim, adiciona a célula de ações à linha do funcionário.
         tr.appendChild(tdAcoes);
 
-        // E adiciona a linha completa (<tr>) ao corpo da tabela (<tbody>).
         tbody.appendChild(tr);
       });
-
-      // Adiciona o corpo à tabela.
       table.appendChild(tbody);
 
-      // ---------------------------------------------------------------------------
-      // 4️⃣ Exibe a tabela completa dentro da div principal (divTabela).
-      // Isso substitui qualquer conteúdo anterior (graças ao innerHTML = "").
-      // ---------------------------------------------------------------------------
       divTabela.appendChild(table);
     }
 
 
-    // Preenche os dois selects (cadastro e filtro) com os cargos vindos da API
-    function preencherSelectCargos(dados) {
-      cboCargos.innerHTML = '<option value="-1">Selecione um cargo</option>';
-      dados.data.cargos.forEach(cargo => {
-        const option = document.createElement("option");
-        option.value = cargo.idCargo;
-        option.textContent = cargo.nomeCargo;
-        cboCargos.appendChild(option);
-      });
-
-      cboCargosFiltro.innerHTML = '<option value="-1">Selecione um cargo</option>';
-      dados.data.cargos.forEach(cargo => {
-        const option = document.createElement("option");
-        option.value = cargo.idCargo;
-        option.textContent = cargo.nomeCargo;
-        cboCargosFiltro.appendChild(option);
-      });
-    }
-
-    // Busca a lista de cargos na API logo que a página é carregada
-    const cargos = await api.get("/cargos");
-    preencherSelectCargos(cargos);
-
-    // ======================== FILTROS EM TEMPO REAL ========================
-    // A cada digitação ou mudança em um campo, a tabela é filtrada
-    [txtFiltroNome, cboCargosFiltro, chkValeTransporteFiltro].forEach(el => {
+    //FILTROS EM TEMPO REAL
+    [txtFiltroNome, chkAdminFiltro].forEach(el => {
       if (el.type === "checkbox") {
         el.addEventListener("change", () => renderTable(filterData()));
       } else {
@@ -435,82 +345,41 @@
       }
     });
 
-    // -----------------------------------------------------------------------------
-    // Função que aplica os filtros de nome, cargo e vale-transporte aos funcionários
-    // -----------------------------------------------------------------------------
     function filterData() {
 
-      // Verifica se os dados da API ainda não foram carregados ou estão incompletos.
-      // Se não houver dados válidos, simplesmente retorna o que tiver em API_DATA
-      // (evita erros ao tentar acessar propriedades indefinidas).
-      if (!API_DATA || !API_DATA.data || !API_DATA.data.funcionarios) return API_DATA;
 
-      // ---------------------------------------------------------------------------
-      // Captura os valores digitados ou selecionados nos filtros:
-      // ---------------------------------------------------------------------------
+      if (!API_DATA || !API_DATA.data || !API_DATA.data.usuarios) return API_DATA;
 
-      // Pega o texto do campo de nome, remove espaços extras e converte para minúsculas.
-      // Isso garante que a busca não seja sensível a maiúsculas/minúsculas.
       const nomeFiltro = txtFiltroNome.value.trim().toLowerCase();
 
-      // Converte o valor selecionado no combo de cargos (que vem como string) em número.
-      // Se nenhum cargo for escolhido, o valor será -1.
-      const cargoFiltro = parseInt(cboCargosFiltro.value);
 
-      // Se a caixa de vale-transporte estiver marcada, valeFiltro = 1; caso contrário, 0.
-      // Isso é útil porque o campo na API provavelmente é numérico (1 = sim, 0 = não).
-      const valeFiltro = chkValeTransporteFiltro.checked ? 1 : 0;
+      const adminFiltro = chkAdminFiltro.checked ? 1 : 0;
+      const adminFiltroAtivo = chkAdminFiltro.checked;
 
-      // ValeFiltroAtivo indica se o usuário realmente quer filtrar por vale-transporte.
-      // Ou seja, só aplicaremos esse filtro se a caixa estiver marcada.
-      const valeFiltroAtivo = chkValeTransporteFiltro.checked;
-
-      // ---------------------------------------------------------------------------
-      // Cria uma nova lista com apenas os funcionários que atendem aos filtros:
-      // ---------------------------------------------------------------------------
-
-      const dadosFiltrados = API_DATA.data.funcionarios.filter(f => {
-        // Começamos assumindo que o funcionário será exibido.
+      const dadosFiltrados = API_DATA.data.usuarios.filter(f => {
         let match = true;
 
-        // 1️⃣ Filtro por nome:
-        // Se o campo de nome não estiver vazio, verifica se o nome do funcionário contém
-        // o texto digitado (comparação em minúsculas para evitar diferenças de maiúsculas/minúsculas).
         if (nomeFiltro) {
-          match = match && f.nomeFuncionario.toLowerCase().includes(nomeFiltro);
+          match = match && f.nomeUsuario.toLowerCase().includes(nomeFiltro);
         }
 
-        // 2️⃣ Filtro por cargo:
-        // Só aplica o filtro se um cargo específico tiver sido escolhido (diferente de -1).
-        // Compara o id do cargo do funcionário com o cargo selecionado.
         if (!isNaN(cargoFiltro) && cargoFiltro != -1) {
           match = match && f.cargo.idCargo === cargoFiltro;
         }
 
-        // 3️⃣ Filtro por vale-transporte:
-        // Só aplica se o usuário tiver marcado a opção "Recebe Vale Transporte".
-        // Assim, apenas funcionários com recebeValeTransporte === 1 serão mostrados.
-        if (valeFiltroAtivo) {
-          match = match && f.recebeValeTransporte === valeFiltro;
+        if (adminFiltroAtivo) {
+          match = match && f.eadmin === adminFiltro;
         }
 
-        // Retorna true se o funcionário passou em todos os filtros aplicáveis.
         return match;
       });
-
-      // ---------------------------------------------------------------------------
-      // Retorna um novo objeto no mesmo formato do original (API_DATA),
-      // mas substitui a lista completa de funcionários pela lista filtrada.
-      // Isso permite que a função renderTable() use o mesmo formato sempre.
-      // ---------------------------------------------------------------------------
       return {
         data: {
-          funcionarios: dadosFiltrados
+          usuarios: dadosFiltrados
         }
       };
     }
 
-    // Ao carregar a página, faz a primeira listagem
     listAll();
   </script>
 </body>
