@@ -11,6 +11,8 @@ class ValidateUsuarioBody implements MiddlewareInterface
 {
     public function process(Request $request, RequestHandler $handler): Response
     {
+        error_log("🟠  ValidateUsuarioBody::process()");
+
         $body = $request->getBody()->getContents();
         $objPHP = json_decode($body);
 

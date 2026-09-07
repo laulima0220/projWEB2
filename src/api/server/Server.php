@@ -99,6 +99,7 @@ class Server
      */
     private function setupMiddlewares(): void
     {
+        error_log("⚪ Server::setupMiddlewares()");
         // =============================================================
         // MIDDLEWARE 1: Body Parsing Middleware
         // =============================================================
@@ -147,6 +148,7 @@ class Server
      */
     private function setupRoutes(): void
     {
+        error_log("⚪ Server::setupRoutes()");
         // =============================================================
         // DELEGAÇÃO DE ROTAS PARA ROUTERS ESPECÍFICOS
         // =============================================================
@@ -198,6 +200,7 @@ class Server
      */
     private function setupErrorHandling(): void
     {
+        error_log("⚪ Server::setupErrorHandling()");
         // =============================================================
         // CONFIGURAÇÃO DO MIDDLEWARE DE ERRO
         // =============================================================
@@ -287,6 +290,7 @@ class Server
      */
     public function run(): void
     {
+        error_log("⚪ Server::run()");
         // Executa a aplicação Slim, que processa a requisição atual
         // e retorna a resposta apropriada baseada nas rotas configuradas
         $this->app->run();

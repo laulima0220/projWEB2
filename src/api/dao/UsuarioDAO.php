@@ -12,8 +12,53 @@ class UsuarioDAO
 
     public function __construct(MysqlDatabase $databaseInstance)
     {
-        $this->database = $databaseInstance;
         error_log("UsuarioDAO::__construct()");
+        $this->database = $databaseInstance;
+    }
+
+     public function verificarLogin(Usuario $usuario): ?Usuario
+    {
+        error_log("🟢 UsuarioDAO::verificarLogin()");
+
+        $sql = "SELECT *
+        FROM usuario
+        WHERE email = :email
+        LIMIT 1";
+
+        $pdo = $this->database->getConnection();
+
+        $stmt = $pdo->prepare($sql);
+
+        $stmt->execute([
+            ':email' => $usuario->getEmail()
+        ]);
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        /**
+         * Email não encontrado.
+         */
+        if (!$row) {
+            error_log("🔴 Email não encontrado: " . $usuario->getEmail());
+            return null;
+        }
+
+        if (!password_verify($usuario->getSenha(), $row['senha'])) {
+            error_log("🔴 Senha não confere. Digitada: '{$usuario->getSenha()}' | Hash no banco: {$row['senha']}");
+            return null;
+        }
+
+        $usuarioAutenticado = new Usuario();
+
+        $usuarioAutenticado->setIdUsuario((int) $row['idUsuario']);
+
+        $usuarioAutenticado->setNomeUsuario($row['nomeUsuario']);
+
+        $usuarioAutenticado->setEmail($row['email']);
+
+        $usuarioAutenticado->setAdmin((int) $row['admin']);
+
+        return $usuarioAutenticado;
     }
 
     public function create(Usuario $usuario): Usuario

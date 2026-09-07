@@ -18,10 +18,44 @@ class UsuarioService
 
         $this->usuarioDAO=$usuarioDAODependency;
     }
+
+    public function loginService(array $jsonUsuario): array
+    {
+        error_log("UsuarioService::loginService()");
+        $usuario = new Usuario();
+        $usuario->setEmail($jsonUsuario['email']);
+        $usuario->setSenha($jsonUsuario['senha']);
+
+        $usuario = $this->usuarioDAO->verificarLogin($usuario);
+
+        if (!$usuario) {
+            throw new ErrorResponse(
+                401,
+                "Usuário ou senha inválidos",
+                ["message" => "Não foi possível autenticar o usuário"]
+            );
+        }
+
+        $jwt = new MeuTokenJWT();
+        $claims = new \stdClass();
+        $claims->idUsuario = $usuario->getIdUsuario();
+        $claims->name = $usuario->getNomeUsuario();
+        $claims->email = $usuario->getEmail();
+        $claims->admin = $usuario->getAdmin();
+
+        $token = $jwt->gerarToken($claims);
+
+        return [
+            'usuario' => $usuario,
+            'token' => $token
+        ];
+    }
     
     public function createService(stdClass $jsonUsuario): Usuario
     {
         error_log("UsuarioService::createService()");
+
+        $dados = $jsonUsuario->usuario;
 
         $usuario = new Usuario();
         $usuario->setNomeUsuario($jsonUsuario->usuario->nomeUsuario);
@@ -47,46 +81,7 @@ class UsuarioService
 
         return $this->usuarioDAO->create($usuario);
     }
-
-    public function loginService(array $jsonUsuario): array
-    {
-        error_log("UsuarioService::loginService()");
-
-        $usuario = new Usuario();
-        $usuario->setEmail($jsonUsuario['usuario']['email']);
-        $usuario->setSenha($jsonUsuario['usuario']['senha']);
-
-        $encontrado=$this->usuarioDAO->login($usuario);
-
-        if(!$encontrado){
-            throw new ErrorResponse(
-                401,
-                "Usuário ou senha inválidos",
-                [
-                    "message" =>
-                        "Não foi possível autenticar"
-                ]
-            );
-        }
-
-        $user = [
-            "usuario" => [
-                "email" =>
-                    $encontrado->getEmail(),
-                "admin" =>
-                    $encontrado->getAdmin(),
-                "name" =>
-                    $encontrado->getNomeUsuario(),
-                "idUsuario" =>
-                    $encontrado->getIdUsuario()
-            ]
-        ];
-
-        return [
-            "user" => $user
-        ];
-    }
-
+    
     public function findAll(): array
     {
         error_log("UsuarioService::findAll()");

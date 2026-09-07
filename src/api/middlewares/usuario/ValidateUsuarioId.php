@@ -12,6 +12,8 @@ class ValidateUsuarioId implements MiddlewareInterface
 {
     public function process(Request $request, RequestHandler $handler): Response
     {
+        error_log("🟠  ValidateFuncionarioId::process()");
+        
         $routeContext = RouteContext::fromRequest($request);
         $route = $routeContext->getRoute();
 

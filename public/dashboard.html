@@ -11,11 +11,11 @@
 <body>
     <div id="divUsuario"></div>
     <div>
-        <a href="Autores.html">Cargos</a>
+        <a href="Autores.html">Autores</a>
     </div>
-<!--     <div>
-        <a href="Funcionarios.html">Funcionarios</a>
-    </div> -->
+    <div>
+        <a href="Usuarios.html">Usuarios</a>
+    </div> 
 </body>
 <script type="module">
     const divUsuario = document.getElementById("divUsuario");
@@ -23,7 +23,7 @@
 
     if (userData) {
         userData = JSON.parse(userData);
-        divUsuario.textContent = "Bem Vindo (" + userData.data.funcionario[0].nomeFuncionario + ")";
+        divUsuario.textContent = "Bem Vindo (" + userData.data.usuario[0].nomeUsuario + ")";
         divUsuario.className = "alert alert-primary";
     }else{
          window.location.href = "login.html"; 

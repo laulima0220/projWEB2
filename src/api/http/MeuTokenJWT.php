@@ -65,8 +65,8 @@ class MeuTokenJWT
             'usuario' => [
                 'name' => $claims->name ?? null,
                 'email' => $claims->email ?? null,
-                'role' => $claims->role ?? null,
-                'idUsuario' => $claims->idUsuario ?? null
+                'idUsuario' => $claims->idUsuario ?? null,
+                'admin' => $claims->admin ?? 0
             ],
         ];
 
