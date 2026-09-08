@@ -22,11 +22,19 @@ class UsuarioService
     public function loginService(array $jsonUsuario): array
     {
         error_log("UsuarioService::loginService()");
-        $usuario = new Usuario();
-        $usuario->setEmail($jsonUsuario['email']);
-        $usuario->setSenha($jsonUsuario['senha']);
 
-        $usuario = $this->usuarioDAO->verificarLogin($usuario);
+        $email = trim($jsonUsuario['email']);
+        $senhaDigitada = trim($jsonUsuario['senha']);
+
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            throw new ErrorResponse(
+                401,
+                "Usuário ou senha inválidos",
+                ["message" => "Não foi possível autenticar o usuário"]
+            );
+        }
+
+        $usuario = $this->usuarioDAO->verificarLogin($email, $senhaDigitada);
 
         if (!$usuario) {
             throw new ErrorResponse(

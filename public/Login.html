@@ -3,14 +3,56 @@
 
     <head>
         <meta charset="UTF-8" />
-        <title>CRUD Usuários com ApiService</title>
+        <title>Museu de Poemas</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        
-        <link href="/css/bootstrap.min.css" rel="stylesheet" />
 
+        <link href="/css/bootstrap.min.css" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+        <!--senha: @Helio123456-->
         <style>
+            html, body {
+                height: 100%;
+            }
+
             body {
-                padding: 2em;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                background-color: #fbe9e7;
+                color: #2a0f2f;
+                font-family: 'Merriweather';
+            }
+
+            .login-card {
+                width: 100%;
+                max-width: 400px;
+                padding: 2rem;
+                border: none;
+                border-radius: 1rem;
+                box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.1);
+                background-color: #F9C5AE;
+            }
+
+            .login-title {
+                text-align: center;
+                margin-bottom: 1.5rem;
+                font-weight: 600;
+            }
+
+            .page-title {
+                text-align:center;
+                margin-top: 0.5em;
+                margin-bottom: 1.5em;
+                font-weight: 700;
+                color: #5c2a5f;
+                font-family: 'Lora';
+            }
+
+            .btn-custom {
+                background-color: #c06c84;
+                border-color: #c06c84;
+                color: #fbe9e7;
             }
 
             table {
@@ -19,27 +61,25 @@
         </style>
     </head>
 
-    <body class="container">
-        <h1 class="mb-4">Login</h1>
-
-        <div class="mb-3">
-            <input type="text" id="txtUsuario" class="form-control mb-2" placeholder="usuario"/>
-            <input type="password" id="txtSenha" class="form-control mb-2" placeholder="senha"/>
+    <body>
+        <div class="page-title">
+            <h1 class="page-title">Museu de Poemas</h1>
+            <h3 class="page-title">Seja bem-vindo</h3>
         </div>
 
-<!--         <div>
-        "usuario": "helioesperidiao@gmail.com",<br>
-        "senha": "@Helio123456" <br>
-        posicione os arquivos na pasta htdocs.<br>
-        Não esqueça de inicar o servidor de banco de dados<br>
-        os arquivos de banco estão na pasta docs<br>
-        Acesse http://localhost:80/view/Login.html<br>
-        Troque a porta para 8080 caso seja necessário
+        <div class="card login-card">
+            <h1 class="login-title" style="color: #5c2a5f;">Login</h1>
 
-        </div> -->
+            <div class="mb-3">
+                <input type="text" id="txtUsuario" class="form-control mb-2" placeholder="e-mail"/>
+                <input type="password" id="txtSenha" class="form-control mb-2" placeholder="senha"/>
+            </div>
 
-        <div class="mb-3" id="divBotoes"></div>
-        <div id="divResposta"></div>
+            <div class="mb-3 d-grid" id="divBotoes"></div>
+
+            <div id="divResposta"></div>
+        </div>
+
         <div id="divTabela"></div>
 
         <script type="module">
@@ -62,9 +102,9 @@
             return btn;
             }
 
-            const btnLogin = createButton("Login", "btn-primary");
+            const btnLogin = createButton("Login", "btn-custom");
             btnLogin.onclick = async function btnListar_click() {
-            // Validação simples para campo nome obrigatório
+            
 
             if (txtUsuario.value.trim() == "") {
                 divResposta.textContent = "Usuário Inválido";
@@ -95,6 +135,5 @@
         divBotoes.appendChild(btnLogin);
         </script>
 
-            
     </body>
 </html>

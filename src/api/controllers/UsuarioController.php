@@ -15,35 +15,27 @@ class UsuarioController
         $this->usuarioService = $usuarioServiceDependency;
     }
 
-     public function loginController(Request $request, Response $response, array $args): Response
+    public function loginController(Request $request, Response $response, array $args): Response
     {
-        error_log("🔵 UsuarioController::loginController()");
+        error_log("UsuarioController::loginController()");
 
         $body = $request->getBody()->getContents();
-
         $objPHP = json_decode($body, true);
 
-        $resultado = $this->usuarioService->loginService($objPHP['usuario']);
+        $jsonUsuario = $objPHP['usuario'];
 
-        $usuario = $resultado['usuario'];
-
-        $token = $resultado['token'];
+        $resultado = $this->usuarioService->loginService($jsonUsuario);
 
         $resposta = [
             'success' => true,
             'message' => 'Login realizado com sucesso',
             'data' => [
-                'usuario' => [
-                    'idUsuario' => $usuario->getIdUsuario(),
-                    'nomeUsuario' => $usuario->getNomeUsuario(),
-                    'email' => $usuario->getEmail(),
-                    'admin' => $usuario->getAdmin(),
-                ],
-                'token' => $token
+                'usuario' => $resultado['usuario'],
+                'token' => $resultado['token']
             ]
         ];
 
-        $response->getBody()->write(json_encode($resposta));
+        $response->getBody()->write(json_encode($resposta, JSON_UNESCAPED_UNICODE));
 
         return $response
             ->withHeader('Content-Type', 'application/json')

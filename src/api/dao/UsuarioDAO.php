@@ -16,51 +16,34 @@ class UsuarioDAO
         $this->database = $databaseInstance;
     }
 
-     public function verificarLogin(Usuario $usuario): ?Usuario
+   
+    public function verificarLogin(string $email, string $senhaDigitada): ?Usuario
     {
         error_log("🟢 UsuarioDAO::verificarLogin()");
 
-        $sql = "SELECT *
-        FROM usuario
-        WHERE email = :email
-        LIMIT 1";
-
+        $sql = "SELECT * FROM usuario WHERE email = :email LIMIT 1";
         $pdo = $this->database->getConnection();
-
         $stmt = $pdo->prepare($sql);
-
-        $stmt->execute([
-            ':email' => $usuario->getEmail()
-        ]);
+        $stmt->execute([':email' => $email]);
 
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        /**
-         * Email não encontrado.
-         */
         if (!$row) {
-            error_log("🔴 Email não encontrado: " . $usuario->getEmail());
             return null;
         }
 
-        if (!password_verify($usuario->getSenha(), $row['senha'])) {
-            error_log("🔴 Senha não confere. Digitada: '{$usuario->getSenha()}' | Hash no banco: {$row['senha']}");
+        if (!password_verify($senhaDigitada, $row['senha'])) {
             return null;
         }
 
         $usuarioAutenticado = new Usuario();
-
         $usuarioAutenticado->setIdUsuario((int) $row['idUsuario']);
-
         $usuarioAutenticado->setNomeUsuario($row['nomeUsuario']);
-
         $usuarioAutenticado->setEmail($row['email']);
-
         $usuarioAutenticado->setAdmin((int) $row['admin']);
 
         return $usuarioAutenticado;
     }
-
     public function create(Usuario $usuario): Usuario
     {
         error_log("UsuarioDAO::create()");
