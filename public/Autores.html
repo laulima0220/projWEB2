@@ -134,7 +134,7 @@
                     "autor": { "nomeAutor": txtNomeAutor.value.trim() }
                 };
 
-                await api.post("/cargos", objetoCriar);
+                await api.post("/autores", objetoCriar);
 
                 listAll();
             };
@@ -239,7 +239,7 @@
                     //botao selecionar
                     const btnSel = createButton("Selecionar", "btn-info");
                     btnSel.onclick = function(){
-                        txtId.value = autor.nomeAutor;
+                        txtId.value = autor.idAutor;
                         txtNomeAutor.value = autor.nomeAutor;
                         divResposta.textContent = "";
                         divResposta.className = "";
