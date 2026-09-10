@@ -44,6 +44,8 @@
             <div class="mb-3">
                 <input type="number" id="txtId" class="form-control mb-2" disabled placeholder="ID (para update ou delete)" />
                 <input type="text" id="txtNomeAutor" class="form-control mb-2" placeholder="Nome" />
+                <input type="text" id="txtNacionalidade" class="form-control mb-2" placeholder="Nacionalidade"/>
+                <input type="text" id="txtBiografia" class="form-control mb-2" placeholder="Biografia"/>
             </div>
             <div class="mb-3 d-flex gap-2" id="divBotoes"></div>
             <div id="divResposta"></div>
@@ -101,6 +103,8 @@
 
             const txtId = document.getElementById("txtId");
             const txtNomeAutor = document.getElementById("txtNomeAutor");
+            const txtNacionalidade = document.getElementById("txtNacionalidade");
+            const txtBiografia = document.getElementById("txtBiografia");
             const divBotoes = document.getElementById("divBotoes");
             const divResposta = document.getElementById("divResposta");
 
@@ -129,9 +133,23 @@
                     divResposta.className = "alert alert-warning";
                     return;
                 }
+                if (txtNacionalidade.value.trim() == ""){
+                    divResposta.txtContent = "Nacionalidade inválida";
+                    divResposta.className = "alert alert-warning";
+                    return;
+                }
+                if (txtBiografia.value.trim() == ""){
+                    divResposta.txtContent = "Biografia inválida";
+                    divResposta.className = "alert alert-warning";
+                    return;
+                }
 
                 const objetoCriar = {
-                    "autor": { "nomeAutor": txtNomeAutor.value.trim() }
+                    "autor": { 
+                        "nomeAutor": txtNomeAutor.value.trim(),
+                        "nacionalidade": txtNacionalidade.value.trim(),
+                        "biografia": txtBiografia.value.trim(),
+                     }
                 };
 
                 await api.post("/autores", objetoCriar);
@@ -150,7 +168,11 @@
                     return
                 }
                 const objetoAtualizar = {
-                    "autor": { "nomeAutor": txtNomeAutor.value.trim() }
+                    "autor": { 
+                        "nomeAutor": txtNomeAutor.value.trim(),
+                        "nacionalidade": txtNacionalidade.value.trim(),
+                        "biografia": txtBiografia.value.trim()
+                    }
                 };
 
                 await api.put("/autores", id, objetoAtualizar);
@@ -241,6 +263,8 @@
                     btnSel.onclick = function(){
                         txtId.value = autor.idAutor;
                         txtNomeAutor.value = autor.nomeAutor;
+                        txtNacionalidade.value = autor.nacionalidade;
+                        txtBiografia.value = autor.biografia;
                         divResposta.textContent = "";
                         divResposta.className = "";
                     };
