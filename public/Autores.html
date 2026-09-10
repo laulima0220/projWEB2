@@ -1,306 +1,383 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-    <head>
-        <meta charset="UTF-8"/>
-        <title> </title>
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        
-        <link href="/css/bootstrap.min.css" rel="stylesheet" />
-        <script src="/js/bootstrap.bundle.min.js"></script>
- 
-        <style>
-            body {
-                padding: 2em;
-            }
 
-            table {
-                margin-top: 1em;
-            }
-        </style>
-    </head>
+<head>
+  <meta charset="UTF-8" />
+  <title>CRUD Autores com ApiService</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- Meta tag essencial para responsividade em dispositivos móveis -->
 
-    <body class="container">
-        <!--TITULO-->
-        <h1 class="mb-4">Gerenciamento de Autores</h1>
+  <!-- Importa o Bootstrap para estilização rápida e layout responsivo -->
+  <link href="/css/bootstrap.min.css" rel="stylesheet" />
 
-        <!--FILTRO-->
-        <div class="card mb-3">
-            <div class="card-header">
-                Filtro de busca de Autores
-            </div>
-            <div class="card-body">
-                <label for="txtFiltroAutor" class="form-label">Nome do Autor</label>
-                <input type="text" id="txtFiltroAutor" class="form-control" placeholder="Digite o nome do autor">
-            </div>
+  <script src="/js/bootstrap.bundle.min.js"></script>
+
+
+  <!-- Estilos adicionais da página -->
+  <style>
+    body {
+      padding: 2em;
+      /* Espaçamento interno geral */
+    }
+
+    table {
+      margin-top: 1em;
+      /* Espaço acima da tabela */
+    }
+  </style>
+</head>
+
+<body class="container">
+  <!-- Usa a classe 'container' do Bootstrap para centralizar o conteúdo -->
+
+  <h1 class="mb-4">Gerenciamento de Autores</h1>
+  <!-- Título principal da aplicação -->
+
+  <!-- =========================== SEÇÃO DE FILTRO =========================== -->
+  <div class="card mb-3">
+    <div class="card-header">
+      Filtro de Autor
+    </div>
+    <div class="card-body">
+      <!-- Campo de entrada para digitar o nome e filtrar autores -->
+      <label for="txtFiltroAutor" class="form-label">Nome do Autor</label>
+      <input type="text" id="txtFiltroAutor" class="form-control" placeholder="Digite o nome do autor">
+    </div>
+  </div>
+
+  <!-- =========================== SEÇÃO DE CADASTRO =========================== -->
+  <div class="card mb-3">
+    <div class="card-header">
+      Cadastro de Autor
+    </div>
+
+    <div class="card-body">
+      <!-- Campos de formulário para criar/editar autores -->
+      <div class="mb-3">
+        <!-- Campo ID (desabilitado, usado apenas para update/delete) -->
+        <input type="number" id="txtId" class="form-control mb-2" disabled placeholder="ID (para update ou delete)" />
+
+        <!-- Campo para o nome do autor -->
+        <input type="text" id="txtNomeAutor" class="form-control mb-2" placeholder="Nome" />
+
+        <!-- Campo para a nacionalidade do autor -->
+        <input type="text" id="txtNacionalidade" class="form-control mb-2" placeholder="Nacionalidade" />
+
+        <!-- Campo para a biografia do autor -->
+        <input type="text" id="txtBiografia" class="form-control mb-2" placeholder="Biografia" />
+      </div>
+
+      <!-- Área onde os botões CRUD serão inseridos dinamicamente -->
+      <div class="mb-3 d-flex gap-2" id="divBotoes"></div>
+
+      <!-- Div para mensagens de sucesso/erro -->
+      <div id="divResposta"></div>
+    </div>
+  </div>
+
+  <!-- =========================== SEÇÃO DE LISTAGEM =========================== -->
+  <div class="card mt-4">
+    <div class="card-header">
+      Lista de Autores
+    </div>
+    <div class="card-body">
+      <!-- Div onde a tabela será renderizada dinamicamente -->
+      <div id="divTabela"></div>
+    </div>
+  </div>
+
+
+  <!-- Modal de confirmação -->
+  <div class="modal fade" id="modalConfirm" tabindex="-1" aria-labelledby="modalConfirmLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalConfirmLabel">Confirmar Exclusão</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
         </div>
-
-        <!--CADASTRO-->
-        <div class="card mb-3">
-            <div class="card-header">
-            Cadastro de Autor
-            </div>
-
-            <div class="card-body">
-            <div class="mb-3">
-                <input type="number" id="txtId" class="form-control mb-2" disabled placeholder="ID (para update ou delete)" />
-                <input type="text" id="txtNomeAutor" class="form-control mb-2" placeholder="Nome" />
-                <input type="text" id="txtNacionalidade" class="form-control mb-2" placeholder="Nacionalidade"/>
-                <input type="text" id="txtBiografia" class="form-control mb-2" placeholder="Biografia"/>
-            </div>
-            <div class="mb-3 d-flex gap-2" id="divBotoes"></div>
-            <div id="divResposta"></div>
-            </div>
+        <div class="modal-body">
+          Tem certeza que deseja excluir este autor?
         </div>
-
-        <!--LISTAGEM-->
-        <div class="card mt-4">
-            <div class="card-header">
-            Lista de Autores
-            </div>
-            <div class="card-body">
-            <!-- Div onde a tabela será renderizada dinamicamente -->
-            <div id="divTabela"></div>
-            </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-danger" id="btnConfirmDelete">Excluir</button>
         </div>
+      </div>
+    </div>
+  </div>
 
-        <!-- Modal de confirmação -->
-        <div class="modal fade" id="modalConfirm" tabindex="-1" aria-labelledby="modalConfirmLabel" aria-hidden="true">
-            <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                <h5 class="modal-title" id="modalConfirmLabel">Confirmar Exclusão</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-                </div>
-                <div class="modal-body">
-                Tem certeza que deseja excluir este autor?
-                </div>
-                <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-danger" id="btnConfirmDelete">Excluir</button>
-                </div>
-            </div>
-            </div>
-        </div>
+  <!-- =========================== SCRIPT PRINCIPAL =========================== -->
+  <script type="module">
+    // Importa a classe ApiService (responsável por comunicação com a API)
+    import ApiService from './ApiService.js';
 
-        <!--SCRIPT PRINCIPAL-->
-        <script type="module">
-            import ApiService from './ApiService.js';
-            const divUsuario = document.getElementById("divUsuario");
+    // Referência de elemento (não usada neste caso)
+    const divUsuario = document.getElementById("divUsuario");
 
-            let userData = localStorage.getItem("userData");
+    // Recupera informações do usuário armazenadas localmente (token)
+    let userData = localStorage.getItem("userData");
 
-            if (userData) {
-            userData = JSON.parse(userData);
-            } else {
-            window.location.href = "login.html"; 
-            }
-            
-            const token = userData.data.token;
+    // Se o token existir, faz parse do JSON; caso contrário, redireciona ao login
+    if (userData) {
+      userData = JSON.parse(userData);
+    } else {
+      window.location.href = "login.html"; // Segurança: força login
+    }
 
-            const api = new ApiService(token);
+    // Extrai o token JWT do objeto userData
+    const token = userData.data.token;
 
-            let API_DATA;
+    // Instancia o serviço de API, passando o token (usado nos headers)
+    const api = new ApiService(token);
 
-            const txtId = document.getElementById("txtId");
-            const txtNomeAutor = document.getElementById("txtNomeAutor");
-            const txtNacionalidade = document.getElementById("txtNacionalidade");
-            const txtBiografia = document.getElementById("txtBiografia");
-            const divBotoes = document.getElementById("divBotoes");
-            const divResposta = document.getElementById("divResposta");
+    // Variável global que guardará os dados da API
+    let API_DATA;
 
-            //para criar botoes dinamicamente
-            function createButton(text, className){
-                const btn = document.createElement("button");
-                btn.txContent = text;
-                btn.className = `btn ${className} flex-fill`;
-                return btn;
-            }
+    // Referências para elementos da interface
+    const txtId = document.getElementById("txtId");
+    const txtNomeAutor = document.getElementById("txtNomeAutor");
+    const txtNacionalidade = document.getElementById("txtNacionalidade");
+    const txtBiografia = document.getElementById("txtBiografia");
+    const divBotoes = document.getElementById("divBotoes");
+    const divResposta = document.getElementById("divResposta");
 
-            //BOTOES CRUD
+    // -------------------------------------------------------------------------
+    // Função utilitária para criar botões dinamicamente
+    // -------------------------------------------------------------------------
+    function createButton(text, className) {
+      const btn = document.createElement("button");
+      btn.textContent = text;
+      btn.className = `btn ${className} flex-fill`; // Ocupa toda a largura dentro do container flex
+      return btn;
+    }
 
-            //LISTAR
-            const btnListar = createButton("Listar", "btn-primary");
-            btnListar.onclick = async function btnListar_click() {
-                listAll();
-            };
-            divBotoes.appendChild(btnListar);
-           
-            //CREATE
-            const btnCriar = createButton("Criar", "btn-success");
-            btnCriar.onclick = async function btnCriar_click(){
-                if (txtNomeAutor.value.trim() == ""){
-                    divResposta.txtContent = "Nome inválido";
-                    divResposta.className = "alert alert-warning";
-                    return;
-                }
-                if (txtNacionalidade.value.trim() == ""){
-                    divResposta.txtContent = "Nacionalidade inválida";
-                    divResposta.className = "alert alert-warning";
-                    return;
-                }
-                if (txtBiografia.value.trim() == ""){
-                    divResposta.txtContent = "Biografia inválida";
-                    divResposta.className = "alert alert-warning";
-                    return;
-                }
+    // ========================= CRIAÇÃO DOS BOTÕES CRUD =========================
 
-                const objetoCriar = {
-                    "autor": { 
-                        "nomeAutor": txtNomeAutor.value.trim(),
-                        "nacionalidade": txtNacionalidade.value.trim(),
-                        "biografia": txtBiografia.value.trim(),
-                     }
-                };
+    // ---------- BOTÃO LISTAR ----------
+    const btnListar = createButton("Listar", "btn-primary");
+    btnListar.onclick = async function btnListar_click() {
+      // Atualiza a lista de autores chamando a API
+      listAll();
+    };
+    divBotoes.appendChild(btnListar);
 
-                await api.post("/autores", objetoCriar);
+    // ---------- BOTÃO CRIAR ----------
+    const btnCriar = createButton("Criar", "btn-success");
+    btnCriar.onclick = async function btnCriar_click() {
+      // Valida se o campo nome foi preenchido
+      if (txtNomeAutor.value.trim() == "") {
+        divResposta.textContent = "Nome inválido";
+        divResposta.className = "alert alert-warning";
+        return;
+      }
+      // Valida se o campo nacionalidade foi preenchido
+      if (txtNacionalidade.value.trim() == "") {
+        divResposta.textContent = "Nacionalidade inválida";
+        divResposta.className = "alert alert-warning";
+        return;
+      }
+      // Valida se o campo biografia foi preenchido
+      if (txtBiografia.value.trim() == "") {
+        divResposta.textContent = "Biografia inválida";
+        divResposta.className = "alert alert-warning";
+        return;
+      }
 
-                listAll();
-            };
-            divBotoes.appendChild(btnCriar);
+      // Monta o objeto no formato esperado pela API
+      const objetoCriar = {
+        "autor": {
+          "nomeAutor": txtNomeAutor.value.trim(),
+          "nacionalidade": txtNacionalidade.value.trim(),
+          "biografia": txtBiografia.value.trim()
+        }
+      };
 
-            //UPDATE
-            const btnAtualizar = createButton("Atualizar", "btn-warning");
-            btnAtualizar.onclick = async function btnAtualizar_click(){
-                const id = txtId.value.trim();
-                if(!id){
-                    divResposta.textContent = "Selecione um autor para atulizar";
-                    divResposta.className = "alert alert-warning";
-                    return
-                }
-                const objetoAtualizar = {
-                    "autor": { 
-                        "nomeAutor": txtNomeAutor.value.trim(),
-                        "nacionalidade": txtNacionalidade.value.trim(),
-                        "biografia": txtBiografia.value.trim()
-                    }
-                };
+      // Chama o endpoint POST da API
+      await api.post("/autores", objetoCriar);
 
-                await api.put("/autores", id, objetoAtualizar);
-                listAll();
-            };
-            divBotoes.appendChild(btnAtualizar);
+      // Atualiza a tabela após criar
+      listAll();
+    };
+    divBotoes.appendChild(btnCriar);
 
-            //DELETE
-            const btnExcluir = createButton("Excluir", "btn-danger");
-            btnExcluir.onclick = function () {
-                const id = txtId.value.trim();
-                if(!id){
-                    divResposta.textContent="Selecione um autor para excluir";
-                    divResposta.className="alert alert-warning";
-                    return;
-                }
+    // ---------- BOTÃO ATUALIZAR ----------
+    const btnAtualizar = createButton("Atualizar", "btn-warning");
+    btnAtualizar.onclick = async function btnAtualizar_click() {
+      const id = txtId.value.trim();
+      if (!id) {
+        divResposta.textContent = "Selecione um autor para atualizar";
+        divResposta.className = "alert alert-warning";
+        return
+      }
+      const objetoAtualizar = {
+        "autor": {
+          "nomeAutor": txtNomeAutor.value.trim(),
+          "nacionalidade": txtNacionalidade.value.trim(),
+          "biografia": txtBiografia.value.trim()
+        }
+      };
 
-                //MODAL
-                const modal = new bootstrap.Modal(document.getElementById('modalConfirm'));
-                modal.show();
+      // Envia atualização via PUT
+      await api.put("/autores", id, objetoAtualizar);
+      listAll(); // Atualiza a tabela
+    };
+    divBotoes.appendChild(btnAtualizar);
 
-                //CONFIRMACAO NO MODAL
-                const btnConfirmDelete = document.getElementById("btnConfirmDelete");
-                btnConfirmDelete.onclick = async function (){
-                    await api.delete("/autores", id);
-                    listAll();
-                    divResposta.textContent = `Autor ID ${id} excluído com sucesso.`;
-                    divResposta.className = "alert alert-success";
-                    txtId.value = "";
-                    txtNomeAutor.value = "";
-                    modal.hide();
-                };
-            };
-            divBotoes.appendChild(btnExcluir);
+    // ---------- BOTÃO EXCLUIR ----------
+    const btnExcluir = createButton("Excluir", "btn-danger");
+    btnExcluir.onclick = function () {
+      // Atualiza o ID do autor a ser excluído
+      const id = txtId.value.trim();
+      if (!id) {
+        divResposta.textContent = "Selecione um autor para excluir";
+        divResposta.className = "alert alert-warning";
+        return;
+      }
 
-            //BUSCAR E EXIBIR EM TABELA
-            async function listAll() {
-                API_DATA = await api.get("/autores");
+      // Mostra o modal
+      const modal = new bootstrap.Modal(document.getElementById('modalConfirm'));
+      modal.show();
 
-                if (API_DATA.success == true){
-                    renderTable(API_DATA);
-                } else {
-                    //tratamento de erro opcional;
-                }
-            }
+      // Botão de confirmação no modal
+      const btnConfirmDelete = document.getElementById("btnConfirmDelete");
+      btnConfirmDelete.onclick = async function () {
+        await api.delete("/autores", id);
+        listAll();
+        divResposta.textContent = `Autor ID ${id} excluído com sucesso.`;
+        divResposta.className = "alert alert-success";
+        txtId.value = "";
+        txtNomeAutor.value = "";
+        modal.hide(); // fecha o modal
+      };
+    };
+    divBotoes.appendChild(btnExcluir);
 
-            //MONTAR DINAMICAMENTE TABELA NO DOM
-            function renderTable(dados){
-                const divTabela = document.getElementById("divTabela");
-                divTabela.innerHTML = "";
+    // -------------------------------------------------------------------------
+    // Função para buscar todos os autores e exibi-los em tabela
+    // -------------------------------------------------------------------------
+    async function listAll() {
+      API_DATA = await api.get("/autores"); // Requisição GET
 
-                const table = document.createElement("table");
-                table.className = "table table-bordered table-striped";
+      if (API_DATA.success == true) {
+        renderTable(API_DATA); // Mostra tabela com dados válidos
+      } else {
+        // Tratamento de erro opcional: token inválido, etc.
+        // alert("Token inválido");
+        // window.location.href = "login.html";
+      }
+    }
 
-                const thead = document.createElement("thead");
-                thead.className = "table-light";
-                const trHead = document.createElement("tr");
+    // -------------------------------------------------------------------------
+    // Função que monta dinamicamente a tabela de autores no DOM
+    // -------------------------------------------------------------------------
+    function renderTable(dados) {
+      const divTabela = document.getElementById("divTabela");
+      divTabela.innerHTML = ""; // Remove qualquer tabela anterior
 
-                ["ID", "Nome Autor", "Ações"].forEach(text => {
-                    const th = document.createElement("th");
-                    th.textContent = text;
-                    trHead.appendChild(th);
-                });
+      // Cria a estrutura base da tabela
+      const table = document.createElement("table");
+      table.className = "table table-bordered table-striped"; // Classes Bootstrap
 
-                thead.appendChild(trHead);
-                table.appendChild(thead);
+      // -------------------- Cabeçalho --------------------
+      const thead = document.createElement("thead");
+      thead.className = "table-light"; // Fundo claro
+      const trHead = document.createElement("tr");
 
-                //CORPO DA TABELA
-                const tbody = document.createElement("tbody");
+      // Define os títulos das colunas
+      ["ID", "Nome Autor", "Ações"].forEach(text => {
+        const th = document.createElement("th");
+        th.textContent = text;
+        trHead.appendChild(th);
+      });
 
-                //itera sobre cada autor !
-                dados.data.autores.forEach(autor => {
-                    const tr = document.createElement("tr");
+      thead.appendChild(trHead);
+      table.appendChild(thead);
 
-                    const tdId=document.createElement("td");
-                    tdId.textContent = autor.idAutor;
-                    tr.appendChild(tdId);
+      // -------------------- Corpo da tabela --------------------
+      const tbody = document.createElement("tbody");
 
-                    const tdNome = document.createElement("td");
-                    tdNome.textContent = autor.nomeAutor;
-                    tr.appendChild(tdNome);
+      // Itera sobre cada autor retornado da API
+      dados.data.autores.forEach(autor => {
+        const tr = document.createElement("tr");
 
-                    const tdAcors = document.createElement("div");
-                    divBotoes.className = "d-flex gap-2";
+        // Coluna ID
+        const tdId = document.createElement("td");
+        tdId.textContent = autor.idAutor;
+        tr.appendChild(tdId);
 
-                    //botao selecionar
-                    const btnSel = createButton("Selecionar", "btn-info");
-                    btnSel.onclick = function(){
-                        txtId.value = autor.idAutor;
-                        txtNomeAutor.value = autor.nomeAutor;
-                        txtNacionalidade.value = autor.nacionalidade;
-                        txtBiografia.value = autor.biografia;
-                        divResposta.textContent = "";
-                        divResposta.className = "";
-                    };
-                    divBotoes.appendChild(btnSel);
+        // Coluna Nome
+        const tdNome = document.createElement("td");
+        tdNome.textContent = autor.nomeAutor;
+        tr.appendChild(tdNome);
 
-                    tdAcoes.appendChild(divBotoes);
-                    tr.appendChild(tdAcoes);
+        // Coluna de Ações (Selecionar e Excluir)
+        const tdAcoes = document.createElement("td");
 
-                    tbody.appendChild(tr);
-                });
+        // Cria um container flexível para os botões
+        const divBotoes = document.createElement("div");
+        divBotoes.className = "d-flex gap-2"; // Flex horizontal com espaçamento
 
-                table.appendChild(tbody);
-                divTabela.appendChild(table);
-            }
+        // ------ Botão Selecionar ------
+        const btnSel = createButton("Selecionar", "btn-info");
+        btnSel.onclick = function () {
+          // Preenche os campos com o autor selecionado
+          txtId.value = autor.idAutor;
+          txtNomeAutor.value = autor.nomeAutor;
+          txtNacionalidade.value = autor.nacionalidade;
+          txtBiografia.value = autor.biografia;
 
-            //filtro em tempo real
-            txtFiltroAutor.addEventListener("input", function (){
-                const filtro = txtFiltroAutor.value.trim().toLowerCase();
+          // Limpa mensagens anteriores
+          divResposta.textContent = "";
+          divResposta.className = "";
+        };
+        divBotoes.appendChild(btnSel);
 
-                if(!API_DATA || !API_DATA.data || !API_DATA.data.autores) return;
 
-                const dadosFiltrados = {
-                    data: {
-                        autores: API_DATA.data.autores.filter(autor =>
-                            autor.nomeAutor.toLowerCase().includes(filtro)
-                        )
-                    }
-                };
 
-                renderTable(dadosFiltrados);
-                txtId.value="";
-            });
+        // Anexa os botões à célula e a linha
+        tdAcoes.appendChild(divBotoes);
+        tr.appendChild(tdAcoes);
 
-            listAll();
-        </script>
-    </body>
+        // Adiciona a linha ao corpo da tabela
+        tbody.appendChild(tr);
+      });
 
-    
+      // Monta tabela final e exibe na tela
+      table.appendChild(tbody);
+      divTabela.appendChild(table);
+    }
+
+    // -------------------------------------------------------------------------
+    // Filtro em tempo real: atualiza a tabela conforme o usuário digita
+    // -------------------------------------------------------------------------
+    txtFiltroAutor.addEventListener("input", function () {
+      const filtro = txtFiltroAutor.value.trim().toLowerCase();
+
+      // Garante que os dados existem antes de filtrar
+      if (!API_DATA || !API_DATA.data || !API_DATA.data.autores) return;
+
+      // Filtra autores cujo nome contenha o texto digitado
+      const dadosFiltrados = {
+        data: {
+          autores: API_DATA.data.autores.filter(autor =>
+            autor.nomeAutor.toLowerCase().includes(filtro)
+          )
+        }
+      };
+
+      // Atualiza a tabela com o resultado filtrado
+      renderTable(dadosFiltrados);
+
+      // Limpa campo ID para evitar inconsistência ao editar
+      txtId.value = "";
+    });
+
+    // -------------------------------------------------------------------------
+    // Inicializa a aplicação listando todos os autores ao carregar a página
+    // -------------------------------------------------------------------------
+    listAll();
+  </script>
+
+</body>
+
 </html>

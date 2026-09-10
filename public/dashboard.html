@@ -136,10 +136,10 @@
         if (userData) {
             try {
                 userData = JSON.parse(userData);
-                divUsuario.textContent = "Bem-vindo, " + userData.data.usuario.nomeUsuario + "!";
+                divUsuario.textContent = "Bem-vindo(a), " + userData.data.usuario.nomeUsuario + "!";
             } catch (erro) {
                 console.error("Erro ao processar dados do usuário:", erro);
-                divUsuario.textContent = "Bem-vindo!";
+                divUsuario.textContent = "Bem-vindo(a)!";
             }
         } else {
             window.location.href = "login.html";
