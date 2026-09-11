@@ -44,6 +44,17 @@
             <div class="mb-3">
                 <input type="number" id="txtId" class="form-control mb-2" disabled placeholder="ID (para update ou delete)" />
                 <input type="text" id="txtTitulo" class="form-control mb-2" placeholder="Título" />
+                <input type="text" id="txtConteudo" class="form-control mb-2" placeholder="Conteúdo" />
+                <input type="number" id="txtAnoPublicacao" class="form-control mb-2" placeholder="Ano de Publicação" />
+
+                <select id="cboAutores" class="form-select mb-3">
+                    <option value="-1">Selecione um autor</option>
+                </select>
+
+                <select id="cboCategorias" class="form-select mb-3">
+                    <option value="-1">Selecione uma categoria</option>
+                </select>
+
             </div>
             <div class="mb-3 d-flex gap-2" id="divBotoes"></div>
             <div id="divResposta"></div>
@@ -101,6 +112,10 @@
 
             const txtId = document.getElementById("txtId");
             const txtTitulo = document.getElementById("txtTitulo");
+            const txtConteudo = document.getElementById("txtConteudo");
+            const txtAnoPublicacao = document.getElementById("txtAnoPublicacao");
+            const cboAutores = document.getElementById("cboAutores");
+            const cboCategorias = document.getElementById("cboCategorias");
             const divBotoes = document.getElementById("divBotoes");
             const divResposta = document.getElementById("divResposta");
 
@@ -110,6 +125,38 @@
                 btn.textContent = text;
                 btn.className = `btn ${className} flex-fill`;
                 return btn;
+            }
+
+            //-------------------------------------------------------------------------
+            // Carrega as opções dos comboboxes de Autor e Categoria a partir da API
+            //-------------------------------------------------------------------------
+
+            //POPULA O COMBOBOX DE AUTORES
+            async function carregarAutores(){
+                const resposta = await api.get("/autores");
+
+                if (resposta.success == true){
+                    resposta.data.autores.forEach(autor => {
+                        const option = document.createElement("option");
+                        option.value = autor.idAutor;
+                        option.textContent = autor.nomeAutor;
+                        cboAutores.appendChild(option);
+                    });
+                }
+            }
+
+            //POPULA O COMBOBOX DE CATEGORIAS
+            async function carregarCategorias(){
+                const resposta = await api.get("/categorias");
+
+                if (resposta.success == true){
+                    resposta.data.categorias.forEach(categoria => {
+                        const option = document.createElement("option");
+                        option.value = categoria.idCategoria;
+                        option.textContent = categoria.nomeCategoria;
+                        cboCategorias.appendChild(option);
+                    });
+                }
             }
 
             //BOTOES CRUD
@@ -129,9 +176,35 @@
                     divResposta.className = "alert alert-warning";
                     return;
                 }
+                if (txtConteudo.value.trim() == ""){
+                    divResposta.textContent = "Conteúdo inválido";
+                    divResposta.className = "alert alert-warning";
+                    return;
+                }
+                if (txtAnoPublicacao.value.trim() == ""){
+                    divResposta.textContent = "Ano inválido";
+                    divResposta.className = "alert alert-warning";
+                    return;
+                }
+                if (cboAutores.value == -1){
+                    divResposta.textContent = "Selecione um autor!";
+                    divResposta.className = "alert alert-warning";
+                    return;
+                }
+                if (cboCategorias.value == -1){
+                    divResposta.textContent = "Selecione uma categoria!";
+                    divResposta.className = "alert alert-warning";
+                    return;
+                }
 
                 const objetoCriar = {
-                    "poema": { "titulo": txtTitulo.value.trim() }
+                    "poema": { 
+                        "titulo": txtTitulo.value.trim(),
+                        "conteudo": txtConteudo.value.trim(),
+                        "anoPublicacao": txtAnoPublicacao.value.trim(),
+                        "autor": {"idAutor": parseInt(cboAutores.value)},
+                        "categoria": {"idCategoria": parseInt(cboCategorias.value)}
+                    }
                 };
 
                 await api.post("/poemas", objetoCriar);
@@ -150,7 +223,13 @@
                     return
                 }
                 const objetoAtualizar = {
-                    "poema": { "titulo": txtTitulo.value.trim() }
+                    "poema": {  
+                        "titulo": txtTitulo.value.trim(),
+                        "conteudo": txtConteudo.value.trim(),
+                        "anoPublicacao": txtAnoPublicacao.value.trim(),
+                        "autor": {"idAutor": parseInt(cboAutores.value)},
+                        "categoria": {"idCategoria": parseInt(cboCategorias.value)}
+                    }
                 };
 
                 await api.put("/poemas", id, objetoAtualizar);
@@ -179,8 +258,14 @@
                     listAll();
                     divResposta.textContent = `Poema ID ${id} excluído com sucesso.`;
                     divResposta.className = "alert alert-success";
+
                     txtId.value = "";
                     txtTitulo.value = "";
+                    txtConteudo.value = "";
+                    txtAnoPublicacao.value = "";
+                    cboAutores.value = -1;
+                    cboCategorias.value = -1;
+                    
                     modal.hide();
                 };
             };
@@ -209,7 +294,7 @@
                 thead.className = "table-light";
                 const trHead = document.createElement("tr");
 
-                ["ID", "Titulo", "Ações"].forEach(text => {
+                ["ID", "Titulo", "Conteúdo", "Ano de Publicação", "Autor", "Categoria", "Ações"].forEach(text => {
                     const th = document.createElement("th");
                     th.textContent = text;
                     trHead.appendChild(th);
@@ -225,13 +310,19 @@
                 dados.data.poemas.forEach(poema => {
                     const tr = document.createElement("tr");
 
-                    const tdId=document.createElement("td");
-                    tdId.textContent = poema.idPoema;
-                    tr.appendChild(tdId);
+                    ["idPoema", "titulo", "conteudo", "anoPublicacao"].forEach(key => {
+                        const td = document.createElement("td");
+                        td.textContent = poema[key]; // Pega o valor direto do objeto
+                        tr.appendChild(td); // Adiciona a célula à linha atual
+                    });
 
-                    const tdNome = document.createElement("td");
-                    tdNome.textContent = poema.titulo;
-                    tr.appendChild(tdNome);
+                    const tdAutor = document.createElement("td");
+                    tdAutor.textContent = poema.autor.nomeAutor; // Acessa o nome dentro do objeto "autor"
+                    tr.appendChild(tdAutor);
+
+                    const tdCategoria = document.createElement("td");
+                    tdCategoria.textContent = poema.categoria.nomeCategoria; // Acessa o nome dentro do objeto "categoria"
+                    tr.appendChild(tdCategoria);
 
                     // célula e container de ações LOCAIS a esta linha
                     // (nunca reaproveitar a divBotoes global do cadastro aqui!)
@@ -244,6 +335,11 @@
                     btnSel.onclick = function(){
                         txtId.value = poema.idPoema;
                         txtTitulo.value = poema.titulo;
+                        txtConteudo.value = poema.conteudo;
+                        txtAnoPublicacao.value = poema.anoPublicacao;
+                        cboAutores.value = poema.autor.idAutor;
+                        cboCategorias.value = poema.categoria.idCategoria;
+
                         divResposta.textContent = "";
                         divResposta.className = "";
                     };
@@ -277,6 +373,9 @@
                 txtId.value="";
             });
 
+            //INICIALIZAÇÃO: carrega os comboboxes antes/junto de listar os poemas
+            carregarAutores();
+            carregarCategorias();
             listAll();
         </script>
     </body>
