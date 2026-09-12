@@ -3,12 +3,13 @@
 
 <head>
   <meta charset="UTF-8" />
-  <title>CRUD Autores com ApiService</title>
+  <title>CRUD Autores</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <!-- Meta tag essencial para responsividade em dispositivos móveis -->
 
   <!-- Importa o Bootstrap para estilização rápida e layout responsivo -->
   <link href="/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
 
   <script src="/js/bootstrap.bundle.min.js"></script>
 
@@ -17,37 +18,81 @@
   <style>
     body {
       padding: 2em;
-      /* Espaçamento interno geral */
+      background-color: #fbe9e7;
+      color: #2a0f2f;
+      font-family: 'Merriweather';
     }
 
     table {
       margin-top: 1em;
-      /* Espaço acima da tabela */
+      
+    }
+
+    .table-custom{
+      --bs-table-bg: #fbe9e7;              /* fundo das linhas normais */
+      --bs-table-color: #2a0f2f;           /* texto nas linhas normais */
+      --bs-table-border-color: #e09090;    /* cor das bordas */
+
+      border-radius: 0.5rem;
+      overflow: hidden;
+    }
+
+    .table-custom-thead{
+      --bs-table-bg: #e09090;              /* fundo do cabeçalho */
+      --bs-table-color: #fbe9e7;           /* texto do cabeçalho */
+    }
+
+    .btn-customA{
+      background-color: #9992d1 !important;
+      border-radius: 1rem;
+      box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.08);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      text-decoration: none;
+    }
+
+    .btn-customB{
+      background-color: #92d1a4 !important;
+      border-radius: 1rem;
+      box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.08);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      text-decoration: none;
+    }
+
+    .btn-customC{
+      background-color: #d1c292 !important;
+      border-radius: 1rem;
+      box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.08);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      text-decoration: none;
+    }
+
+    .btn-customE{
+      background-color: #e09090 !important;
+      border-radius: 1rem;
+      box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.08);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      text-decoration: none;
     }
   </style>
 </head>
 
 <body class="container">
-  <!-- Usa a classe 'container' do Bootstrap para centralizar o conteúdo -->
-
-  <h1 class="mb-4">Gerenciamento de Autores</h1>
-  <!-- Título principal da aplicação -->
+  <h1 class="mb-4" style="text-align: center;">Gerenciamento de Autores</h1>
 
   <!-- =========================== SEÇÃO DE FILTRO =========================== -->
-  <div class="card mb-3">
-    <div class="card-header">
-      Filtro de Autor
+    <div class="card mb-3" style="background-color: #7F428A; color:#fbe9e7;">
+      <div class="card-header" style="text-align: center; font-size: 20px; background-color: #6e3977;">
+        Filtro de Busca de Autor
+      </div>
+      <div class="card-body">
+        <!-- Campo de entrada para digitar o nome e filtrar autores -->
+        <label for="txtFiltroAutor" class="form-label">Nome do Autor</label>
+        <input type="text" id="txtFiltroAutor" class="form-control" placeholder="Digite o nome do autor" style="background-color: #fbe9e7; border: none;">
+      </div>
     </div>
-    <div class="card-body">
-      <!-- Campo de entrada para digitar o nome e filtrar autores -->
-      <label for="txtFiltroAutor" class="form-label">Nome do Autor</label>
-      <input type="text" id="txtFiltroAutor" class="form-control" placeholder="Digite o nome do autor">
-    </div>
-  </div>
-
   <!-- =========================== SEÇÃO DE CADASTRO =========================== -->
-  <div class="card mb-3">
-    <div class="card-header">
+  <div class="card mb-3" style="background-color: #c06c84; color:#fbe9e7">
+    <div class="card-header" style="text-align: center; font-size: 20px; background-color: #af5f75;">
       Cadastro de Autor
     </div>
 
@@ -55,16 +100,16 @@
       <!-- Campos de formulário para criar/editar autores -->
       <div class="mb-3">
         <!-- Campo ID (desabilitado, usado apenas para update/delete) -->
-        <input type="number" id="txtId" class="form-control mb-2" disabled placeholder="ID (para update ou delete)" />
+        <input type="number" id="txtId" class="form-control mb-2" disabled placeholder="ID (para update ou delete)" style="background-color: #fbe9e7; border: none;"/>
 
         <!-- Campo para o nome do autor -->
-        <input type="text" id="txtNomeAutor" class="form-control mb-2" placeholder="Nome" />
+        <input type="text" id="txtNomeAutor" class="form-control mb-2" placeholder="Nome" style="background-color: #fbe9e7; border: none;"/>
 
         <!-- Campo para a nacionalidade do autor -->
-        <input type="text" id="txtNacionalidade" class="form-control mb-2" placeholder="Nacionalidade" />
+        <input type="text" id="txtNacionalidade" class="form-control mb-2" placeholder="Nacionalidade" style="background-color: #fbe9e7; border: none;"/>
 
         <!-- Campo para a biografia do autor -->
-        <input type="text" id="txtBiografia" class="form-control mb-2" placeholder="Biografia" />
+        <input type="text" id="txtBiografia" class="form-control mb-2" placeholder="Biografia" style="background-color: #fbe9e7; border: none;"/>
       </div>
 
       <!-- Área onde os botões CRUD serão inseridos dinamicamente -->
@@ -77,10 +122,10 @@
 
   <!-- =========================== SEÇÃO DE LISTAGEM =========================== -->
   <div class="card mt-4">
-    <div class="card-header">
+    <div class="card-header" style="text-align: center; font-size: 20px; background-color: #eaa185;">
       Lista de Autores
     </div>
-    <div class="card-body">
+    <div class="card-body" style="background-color: #f8b195;">
       <!-- Div onde a tabela será renderizada dinamicamente -->
       <div id="divTabela"></div>
     </div>
@@ -154,7 +199,7 @@
     // ========================= CRIAÇÃO DOS BOTÕES CRUD =========================
 
     // ---------- BOTÃO LISTAR ----------
-    const btnListar = createButton("Listar", "btn-primary");
+    const btnListar = createButton("Listar", "btn-customA");
     btnListar.onclick = async function btnListar_click() {
       // Atualiza a lista de autores chamando a API
       listAll();
@@ -162,7 +207,7 @@
     divBotoes.appendChild(btnListar);
 
     // ---------- BOTÃO CRIAR ----------
-    const btnCriar = createButton("Criar", "btn-success");
+    const btnCriar = createButton("Criar", "btn-customB");
     btnCriar.onclick = async function btnCriar_click() {
       // Valida se o campo nome foi preenchido
       if (txtNomeAutor.value.trim() == "") {
@@ -201,7 +246,7 @@
     divBotoes.appendChild(btnCriar);
 
     // ---------- BOTÃO ATUALIZAR ----------
-    const btnAtualizar = createButton("Atualizar", "btn-warning");
+    const btnAtualizar = createButton("Atualizar", "btn-customC");
     btnAtualizar.onclick = async function btnAtualizar_click() {
       const id = txtId.value.trim();
       if (!id) {
@@ -224,7 +269,7 @@
     divBotoes.appendChild(btnAtualizar);
 
     // ---------- BOTÃO EXCLUIR ----------
-    const btnExcluir = createButton("Excluir", "btn-danger");
+    const btnExcluir = createButton("Excluir", "btn-customE");
     btnExcluir.onclick = function () {
       // Atualiza o ID do autor a ser excluído
       const id = txtId.value.trim();
@@ -276,15 +321,15 @@
 
       // Cria a estrutura base da tabela
       const table = document.createElement("table");
-      table.className = "table table-bordered table-striped"; // Classes Bootstrap
+      table.className = "table table-bordered table-striped table-custom"; // Classes Bootstrap
 
       // -------------------- Cabeçalho --------------------
       const thead = document.createElement("thead");
-      thead.className = "table-light"; // Fundo claro
+      thead.className = "table-custom-thead"; // Fundo 
       const trHead = document.createElement("tr");
 
       // Define os títulos das colunas
-      ["ID", "Nome Autor", "Ações"].forEach(text => {
+      ["ID", "Nome Autor", "Nacionalidade", "Biografia", "Ações"].forEach(text => {
         const th = document.createElement("th");
         th.textContent = text;
         trHead.appendChild(th);
@@ -310,6 +355,16 @@
         tdNome.textContent = autor.nomeAutor;
         tr.appendChild(tdNome);
 
+        // Coluna Nacionalidade
+        const tdNacionalidade = document.createElement("td");
+        tdNacionalidade.textContent = autor.nacionalidade;
+        tr.appendChild(tdNacionalidade);
+
+        // Coluna Biografia
+        const tdBiografia = document.createElement("td");
+        tdBiografia.textContent = autor.biografia;
+        tr.appendChild(tdBiografia);
+
         // Coluna de Ações (Selecionar e Excluir)
         const tdAcoes = document.createElement("td");
 
@@ -318,7 +373,7 @@
         divBotoes.className = "d-flex gap-2"; // Flex horizontal com espaçamento
 
         // ------ Botão Selecionar ------
-        const btnSel = createButton("Selecionar", "btn-info");
+        const btnSel = createButton("Selecionar", "btn-customB");
         btnSel.onclick = function () {
           // Preenche os campos com o autor selecionado
           txtId.value = autor.idAutor;

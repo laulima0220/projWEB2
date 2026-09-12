@@ -6,71 +6,133 @@
   <title>CRUD Usuários com ApiService</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link href="/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
   <script src="/js/bootstrap.bundle.min.js"></script>
 
   <style>
     body {
       padding: 2em;
+      background-color: #fbe9e7;
+      color: #2a0f2f;
+      font-family: 'Merriweather';
     }
 
     table {
       margin-top: 1em;
     }
+
+    .table-custom {
+      --bs-table-bg: #fbe9e7;
+      /* fundo das linhas normais */
+      --bs-table-color: #2a0f2f;
+      /* texto nas linhas normais */
+      --bs-table-border-color: #e09090;
+      /* cor das bordas */
+
+      border-radius: 0.5rem;
+      overflow: hidden;
+    }
+
+    .table-custom-thead {
+      --bs-table-bg: #e09090;
+      /* fundo do cabeçalho */
+      --bs-table-color: #fbe9e7;
+      /* texto do cabeçalho */
+    }
+
+    .btn-customA {
+      background-color: #9992d1 !important;
+      border-radius: 1rem;
+      box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.08);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      text-decoration: none;
+    }
+
+    .btn-customB {
+      background-color: #92d1a4 !important;
+      border-radius: 1rem;
+      box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.08);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      text-decoration: none;
+    }
+
+    .btn-customC {
+      background-color: #d1c292 !important;
+      border-radius: 1rem;
+      box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.08);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      text-decoration: none;
+    }
+
+    .btn-customE {
+      background-color: #e09090 !important;
+      border-radius: 1rem;
+      box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.08);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      text-decoration: none;
+    }
   </style>
 </head>
 
 <body class="container">
-  <h1 class="mb-4">Gerenciamento de Usuários</h1>
+  <h1 class="mb-4" style="text-align: center;">Gerenciamento de Usuários</h1>
 
   <!--FILTRO -->
-  <div class="card mb-3">
-    <div class="card-header">Filtro de Usuário</div>
+  <div class="card mb-3" style="background-color: #7F428A; color:#fbe9e7;">
+    <div class="card-header" style="text-align: center; font-size: 20px; background-color: #6e3977;">
+      Filtro de Usuário
+    </div>
     <div class="card-body">
       <label for="txtFiltroNome" class="form-label">Nome do usuário</label>
-      <input type="text" id="txtFiltroNome" class="form-control" placeholder="Digite o nome do usuário">
+      <input type="text" id="txtFiltroNome" class="form-control mb-2" placeholder="Digite o nome do usuário" style="background-color: #fbe9e7; border: none;">
 
-      <input type="checkbox" id="chkAdminFiltro" class="form-check-input">
-      <label class="form-check-label" for="chkAdminFiltro">É Admin</label>
+      <div class="form-check">
+        <input type="checkbox" id="chkAdminFiltro" class="form-check-input">
+        <label class="form-check-label" for="chkAdminFiltro">É Admin</label>
+      </div>
     </div>
   </div>
 
   <!--CADASTRO-->
-  <div class="card mb-4">
-    <div class="card-header">Cadastro de Usuário</div>
+  <div class="card mb-4" style="background-color: #c06c84; color:#fbe9e7">
+    <div class="card-header" style="text-align: center; font-size: 20px; background-color: #af5f75;">
+      Cadastro de Usuário
+    </div>
     <div class="card-body">
       <div class="mb-3">
-        <input type="number" id="txtId" class="form-control mb-2" disabled placeholder="ID (para update ou delete)" />
+        <input type="number" id="txtId" class="form-control mb-2" disabled placeholder="ID (para update ou delete)" style="background-color: #fbe9e7; border: none;" />
 
-        <input type="text" id="txtNomeUsuario" class="form-control mb-2" placeholder="Nome" />
-        <input type="text" id="txtEmail" class="form-control mb-2" placeholder="Email" />
-        <input type="password" id="txtSenha" class="form-control mb-2" placeholder="Senha" />
+        <input type="text" id="txtNomeUsuario" class="form-control mb-2" placeholder="Nome" autocomplete="off" style="background-color: #fbe9e7; border: none;" />
+        <input type="text" id="txtEmail" class="form-control mb-2" placeholder="Email" autocomplete="off" style="background-color: #fbe9e7; border: none;" />
+        <input type="password" id="txtSenha" class="form-control mb-2" placeholder="Senha" autocomplete="new-password" style="background-color: #fbe9e7; border: none;" />
 
         <div class="form-check mb-2">
           <input type="checkbox" id="chkAdmin" class="form-check-input">
           <label class="form-check-label" for="chkAdmin">É Admin</label>
         </div>
-        </select>
+      </div>
 
       <!-- Div onde os botões CRUD (Criar, Atualizar, Excluir, Listar) serão criados -->
       <div class="mb-3 d-flex gap-2" id="divBotoes"></div>
-    </div>
 
-    <!-- Div usada para exibir mensagens de sucesso ou erro -->
-    <div id="divResposta" class="alert d-inline-block p-2"></div>
+      <!-- Div usada para exibir mensagens de sucesso ou erro -->
+      <div id="divResposta" class="alert d-inline-block p-2"></div>
+    </div>
   </div>
 
   <!-- CARD: Tabela de Usuários -->
   <div class="card mt-4">
-    <div class="card-header">
+    <div class="card-header" style="text-align: center; font-size: 20px; background-color: #eaa185;">
       Lista de Usuários
     </div>
 
     <!-- Corpo do card, onde a tabela realmente será exibida -->
-    <div class="card-body">
+    <div class="card-body" style="background-color: #f8b195;">
       <!-- Div onde a tabela será inserida dinamicamente via JavaScript -->
       <div id="divTabela"></div>
     </div>
   </div>
+
   <!-- Modal de Confirmação -->
   <div class="modal fade" id="modalConfirm" tabindex="-1" aria-labelledby="modalConfirmLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -101,43 +163,43 @@
     //AUTENTICAÇÃO E CONFIGURAÇÃO INICIAL 
     let userData = localStorage.getItem("userData");
     if (userData) userData = JSON.parse(userData);
-    else window.location.href = "login.html"; 
-    const token = userData.data.token; 
-    const api = new ApiService(token); 
+    else window.location.href = "login.html";
+    const token = userData.data.token;
+    const api = new ApiService(token);
 
-    let API_DATA; 
+    let API_DATA;
 
     //REFERÊNCIAS AOS ELEMENTOS HTML 
     const txtId = document.getElementById("txtId");
     const txtNomeUsuario = document.getElementById("txtNomeUsuario");
     const txtEmail = document.getElementById("txtEmail");
     const txtSenha = document.getElementById("txtSenha");
-     const chkAdmin = document.getElementById("chkAdmin");
+    const chkAdmin = document.getElementById("chkAdmin");
 
     const divBotoes = document.getElementById("divBotoes");
     const divResposta = document.getElementById("divResposta");
 
     // Campos do filtro
     const txtFiltroNome = document.getElementById("txtFiltroNome");
-     const chkAdminFiltro = document.getElementById("chkAdminFiltro");
+    const chkAdminFiltro = document.getElementById("chkAdminFiltro");
 
     //FUNÇÃO AUXILIAR PARA CRIAR BOTÕES 
     function createButton(text, className) {
       const btn = document.createElement("button");
       btn.textContent = text;
-      btn.className = `btn ${className} flex-fill`; 
+      btn.className = `btn ${className} flex-fill`;
       return btn;
     }
 
-    //OTÕES CRUD
+    //BOTÕES CRUD
 
     // BOTÃO LISTAR
-    const btnListar = createButton("Listar", "btn-primary");
+    const btnListar = createButton("Listar", "btn-customA");
     btnListar.onclick = listAll;
     divBotoes.appendChild(btnListar);
 
     //CRIAR
-    const btnCriar = createButton("Criar", "btn-success");
+    const btnCriar = createButton("Criar", "btn-customB");
     btnCriar.onclick = async () => {
       if (txtNomeUsuario.value.trim() === "") {
         divResposta.textContent = "Nome inválido";
@@ -161,15 +223,15 @@
         return;
       }
 
-      const eadmin = chkAdmin.checked ? 1 : 0;
+      const admin = chkAdmin.checked ? 1 : 0;
 
       // Monta o objeto que será enviado para a API
       const objetoCriar = {
         "usuario": {
-          "nomeUSuario": txtNomeUsuario.value.trim(),
+          "nomeUsuario": txtNomeUsuario.value.trim(),
           "email": txtEmail.value.trim(),
           "senha": txtSenha.value.trim(),
-          "admin": eadmin
+          "admin": admin
         }
       };
 
@@ -187,7 +249,7 @@
     divBotoes.appendChild(btnCriar);
 
     //ATUALIZAR
-    const btnAtualizar = createButton("Atualizar", "btn-warning");
+    const btnAtualizar = createButton("Atualizar", "btn-customC");
     btnAtualizar.onclick = async () => {
       const id = txtId.value.trim();
       if (!id) {
@@ -196,12 +258,14 @@
         return;
       }
 
+      const admin = chkAdmin.checked ? 1 : 0;
+
       const objetoAtualizar = {
         "usuario": {
-          "nomeFuncionario": txtNomeUsuario.value.trim(),
+          "nomeUsuario": txtNomeUsuario.value.trim(),
           "email": txtEmail.value.trim(),
           "senha": txtSenha.value.trim(),
-          "recebeValeTransporte": recebeVale,
+          "admin": admin
         }
       };
 
@@ -216,7 +280,7 @@
     divBotoes.appendChild(btnAtualizar);
 
     //BOTÃO EXCLUIR
-    const btnExcluir = createButton("Excluir", "btn-danger");
+    const btnExcluir = createButton("Excluir", "btn-customE");
 
     btnExcluir.onclick = function () {
       const id = txtId.value.trim();
@@ -236,12 +300,12 @@
       newBtnConfirm.onclick = async function () {
         try {
           await api.delete("/usuarios", id);
-          listAll(); 
+          listAll();
           divResposta.textContent = `Usuário ID ${id} excluído com sucesso.`;
           divResposta.className = "alert alert-success";
           limparFormulario();
         } catch (error) {
-          divResposta.textContent = `Erro ao excluir usuário: ${error.message}`; ///////
+          divResposta.textContent = `Erro ao excluir usuário: ${error.message}`;
           divResposta.className = "alert alert-danger";
         } finally {
           modal.hide(); // Fecha o modal
@@ -268,24 +332,24 @@
     }
 
     // Função responsável por criar dinamicamente a tabela HTML com os dados
-    // dos funcionários vindos da API (ou filtrados)
+    // dos usuários vindos da API (ou filtrados)
     function renderTable(dados) {
       const divTabela = document.getElementById("divTabela");
 
       divTabela.innerHTML = "";
 
       const table = document.createElement("table");
-      table.className = "table table-bordered table-striped"; 
+      table.className = "table table-bordered table-striped table-custom";
 
       const thead = document.createElement("thead");
-      thead.className = "table-light";
+      thead.className = "table-custom-thead";
 
       const trHead = document.createElement("tr");
 
       ["ID", "Nome", "Email", "Admin", "Ações"].forEach(text => {
-        const th = document.createElement("th"); 
+        const th = document.createElement("th");
         th.textContent = text;
-        trHead.appendChild(th); 
+        trHead.appendChild(th);
       });
 
       thead.appendChild(trHead);
@@ -293,17 +357,17 @@
 
       const tbody = document.createElement("tbody");
 
-      dados.data.funcionarios.forEach(usuario => {
-        const tr = document.createElement("tr"); 
- 
+      dados.data.usuarios.forEach(usuario => {
+        const tr = document.createElement("tr");
+
         ["idUsuario", "nomeUsuario", "email"].forEach(key => {
           const td = document.createElement("td");
-          td.textContent = usuario[key]; 
-          tr.appendChild(td); 
+          td.textContent = usuario[key];
+          tr.appendChild(td);
         });
 
         const tdAdmin = document.createElement("td");
-        tdAdmin.textContent = usuario.eadmin == 1 ? "Sim" : "Não";
+        tdAdmin.textContent = usuario.admin == 1 ? "Sim" : "Não";
         tr.appendChild(tdAdmin);
 
         const divBotoes = document.createElement("div");
@@ -311,14 +375,14 @@
 
         const tdAcoes = document.createElement("td");
 
-        const btnSel = createButton("Selecionar", "btn-info");
+        const btnSel = createButton("Selecionar", "btn-customB");
 
         btnSel.onclick = () => {
           txtId.value = usuario.idUsuario;
           txtNomeUsuario.value = usuario.nomeUsuario;
           txtEmail.value = usuario.email;
-          txtSenha.value = ""; 
-          chkAdmin.checked = usuario.eadmin == 1;
+          txtSenha.value = "";
+          chkAdmin.checked = usuario.admin == 1;
 
           divResposta.textContent = "";
           divResposta.className = "";
@@ -347,11 +411,9 @@
 
     function filterData() {
 
-
       if (!API_DATA || !API_DATA.data || !API_DATA.data.usuarios) return API_DATA;
 
       const nomeFiltro = txtFiltroNome.value.trim().toLowerCase();
-
 
       const adminFiltro = chkAdminFiltro.checked ? 1 : 0;
       const adminFiltroAtivo = chkAdminFiltro.checked;
@@ -363,12 +425,8 @@
           match = match && f.nomeUsuario.toLowerCase().includes(nomeFiltro);
         }
 
-        if (!isNaN(cargoFiltro) && cargoFiltro != -1) {
-          match = match && f.cargo.idCargo === cargoFiltro;
-        }
-
         if (adminFiltroAtivo) {
-          match = match && f.eadmin === adminFiltro;
+          match = match && f.admin === adminFiltro;
         }
 
         return match;

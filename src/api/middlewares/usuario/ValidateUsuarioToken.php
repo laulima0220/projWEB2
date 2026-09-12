@@ -10,7 +10,7 @@ use Psr\Http\Server\MiddlewareInterface;
 use Api\Http\ErrorResponse;
 use Api\Http\MeuTokenJWT;
 
-class ValidateUsuariaToken implements MiddlewareInterface
+class ValidateUsuarioToken implements MiddlewareInterface
 {
     public function process(Request $request, RequestHandler $handler): Response
     {
